@@ -41,9 +41,11 @@ lang="{{ str_replace('_', '-', app()->getLocale()) }}">
               ficheTransaction:false,
               tarifFaculte:false,
               active: 'home',
+              toggleActive:false,
                 init() {
                     this.active = localStorage.getItem('activeMenu') || 'home'
                 }
+              
     }"
 
 

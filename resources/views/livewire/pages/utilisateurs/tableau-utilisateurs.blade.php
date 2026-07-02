@@ -16,7 +16,7 @@
 			"flex flex-row items-center relative  ",
 			''
 		])>
-            <input wire:model.live="search" :class="!inpuRecherche ? 'w-full p-1 pe-8  md:w-0 lg:w-full md:p-0 md:pe-0 lg:p-1 lg:pe-8' : 'w-full p-1 pe-8'" class=" bg-blue-50 dark:bg-gray-600 shadow-sm rounded  outline-0  dark:text-gray-300 dark:border-gray-600 " type="text" name="" id="" placeholder="Rechercher">
+            <input wire:model.live="search" :class="!inpuRecherche ? 'w-full p-1 pe-8  md:w-0 lg:w-full md:p-0 md:pe-0 lg:p-1 lg:pe-8' : 'w-full p-1 pe-8'" class=" bg-blue-50 dark:bg-gray-600 shadow-sm rounded  outline-0  dark:text-gray-300 dark:border-gray-600 " type="text" name="" id="" placeholder="Code / Nom / Prenom / Nom utilisateur">
             <div @click="inpuRecherche= !inpuRecherche"  @class(['bg-ugnh-blueFonce p-1 right-0 rounded absolute md:me-1 me-2 lg:me-1 '])>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4  text-gray-50">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
@@ -63,8 +63,9 @@
                 <option class="dark:text-gray-200 dark:bg-gray-600" value="Administrateur">Administrateur</option>
                 <option class="dark:text-gray-200 dark:bg-gray-600" value="Secretaire">Secretaire</option>
                 <option class="dark:text-gray-200 dark:bg-gray-600" value="Comptable">Comptable</option>
+                <option class="dark:text-gray-200 dark:bg-gray-600" value="Vice Doyen">Doyen</option>
                 <option class="dark:text-gray-200 dark:bg-gray-600" value="Vice Doyen">Vice Doyen</option>
-                <option class="dark:text-gray-200 dark:bg-gray-600" value="Bibliothecaire">Bibliothecaire</option>
+                {{-- <option class="dark:text-gray-200 dark:bg-gray-600" value="Bibliothecaire">Bibliothecaire</option> --}}
             </select>
         </div>
 
@@ -83,7 +84,7 @@
             ])>
                 <option class="dark:text-gray-200 dark:bg-gray-600" value="">Status</option>
                 <option class="dark:text-gray-200 dark:bg-gray-600" value="1">En ligne</option>
-                <option class="dark:text-gray-200 dark:bg-gray-600" value="0">Hors ligne</option>
+                <option class="dark:text-gray-200 dark:bg-gray-600" value="Horsligne">Hors ligne</option>
             </select>
         </div>
 
@@ -163,6 +164,10 @@
 
 					<td class="p-1 ">
                         <p>{{$Utilisateur->fonction}}</p>
+                        @if ($Utilisateur->fonction == "Vice-doyen de faculté" || $Utilisateur->fonction == "Doyen de faculté"  || $Utilisateur->fonction == "Secretaire faculte" )
+                            <p class="opacity-70">{{ $this->nomFacRole($Utilisateur->nomUtilisateur)  }}</p>
+                        @endif
+                        
 					</td>
 
 

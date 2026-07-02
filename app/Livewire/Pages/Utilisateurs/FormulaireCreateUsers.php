@@ -138,30 +138,34 @@ class FormulaireCreateUsers extends Component
     }
 
     public function save(){
+    try {
+       // $validatedData = $this->validate();
+        $this->nomUtilisateur= $this->generateNomUtilisateur();
+        $this->motDePasse=$this->generateMotDePasse();
 
-    // $validatedData = $this->validate();
-    $this->nomUtilisateur= $this->generateNomUtilisateur();
-    $this->motDePasse=$this->generateMotDePasse();
+            utilisateurModel::create([
+            'codePersonnel' => $this->codePersonnel,
+            'nomUtilisateur' => $this->nomUtilisateur,
+            'motDePasse' => Hash::make($this->motDePasse),
+            'statut' => $this->statut,
+        ]);
 
-        utilisateurModel::create([
-        'codePersonnel' => $this->codePersonnel,
-        'nomUtilisateur' => $this->nomUtilisateur,
-        'motDePasse' => Hash::make($this->motDePasse),
-        'statut' => $this->statut,
-    ]);
+        roleUtilisateur::create([
+            'nomUtilisateur' => $this->nomUtilisateur,
+            'role_id' => $this->role_id,
+            'codeFac'=>$this->codeFac
+        ]);
 
-    roleUtilisateur::create([
-        'nomUtilisateur' => $this->nomUtilisateur,
-        'role_id' => $this->role_id,
-        'codeFac'=>$this->codeFac
-    ]);
-
+        
+        $this->dispatch('success-user', message: "Utilisateur cree avec succes");
+        broadcast(new updatedTable(''));
+        $action ="Creation d'un compte utilisateur";
+        audit(Auth::user()->personnel->code, $action, $this->codePersonnel);
+        $this->resetForm();
+    } catch (\Throwable $th) {
+        // $this->dispatch('success-user', message: "Utilisateur cree avec succes");
+    }
     
-    $this->dispatch('success-user', message: "Utilisateur cree avec succes");
-    broadcast(new updatedTable(''));
-    $action ="Creation d'un compte utilisateur";
-    audit(Auth::user()->personnel->code, $action, $this->codePersonnel);
-    $this->resetForm();
     }
 
     public function mount(){

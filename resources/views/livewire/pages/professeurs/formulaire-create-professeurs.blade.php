@@ -129,7 +129,7 @@ x-transition.duration.300ms
             </div>
 
             <div class="sm:text-2xl text-normal   sm:relative fixed w-full top-0 left-0  font-bold p-3 text-center bg-ugnh-blueClair sm:rounded-sm rounded-none dark:text-gray-600">
-                {{ $id ? "Modifier un professeurs" : "Ajouter un professeurs"}}
+                {{ $id ? "Modifier un professeur" : "Ajouter un professeur"}}
             </div>
 
 
@@ -224,11 +224,40 @@ x-transition.duration.300ms
                 </div>
 
                 <div class="sm:w-1/2 w-full flex flex-row">
-                <label class="font-bold text-gray-500"  for="telephone">Telephone:</label>
-                <div class="relative w-[75%]  pb-4">
-                <input wire:model="telephone" @class(['outline-0 border-b border-gray-600 w-full mx-3', 'border-red-600'=>$errors->has('telephone')]) type="text" id="telephone" >
-                @error('telephone') <p class="text-red-500 text-[10px] absolute  mx-3 bottom-0">{{ $message }}</p> @enderror
-                </div>
+                    <label class="font-bold text-gray-500" for="telephone">
+                        Téléphone :
+                    </label>
+
+                    <div class="relative w-[75%] pb-4">
+                        <input
+                            wire:model="telephone"
+                            x-data
+                            x-mask="+509 99-99-9999"
+                            x-init="
+                                if($el.value === ''){
+                                    $el.value = '+509 ';
+                                }
+                            "
+                            @input="
+                                if(!$el.value.startsWith('+509 ')){
+                                    $el.value = '+509 ';
+                                }
+                            "
+                            @class([
+                                'outline-0 border-b border-gray-600 w-full mx-3',
+                                'border-red-600' => $errors->has('telephone')
+                            ])
+                            type="text"
+                            id="telephone"
+                            placeholder="+509 00-00-0000"
+                        >
+
+                        @error('telephone')
+                            <p class="text-red-500 text-[10px] absolute mx-3 bottom-0">
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    </div>
                 </div>
             </div>
 

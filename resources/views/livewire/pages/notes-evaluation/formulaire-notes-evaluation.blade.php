@@ -65,6 +65,40 @@ x-transition.duration.300ms
             <div class="sm:text-2xl text-normal sm:relative fixed w-full top-0 left-0  font-bold p-3 text-center bg-ugnh-blueClair sm:rounded-t-sm rounded-none dark:text-gray-600">
                 Ajouter des notes
             </div>
+
+                @if(session()->has('successNote'))
+                    <div
+                        x-data="{ show: true }"
+                        x-init="
+                            setTimeout(() => {
+                                show = false;
+                                $wire.clearFlash();
+                            }, 2000)
+                        "
+                        x-show="show"
+                        x-transition
+                        class="m-4 p-4 rounded-lg bg-green-100 text-green-700"
+                    >
+                        {{ session('successNote') }}
+                    </div>
+                @endif
+
+                @if(session()->has('erreur'))
+                    <div
+                        x-data="{ show: true }"
+                        x-init="
+                            setTimeout(() => {
+                                show = false;
+                                $wire.clearFlash();
+                            }, 3000)
+                        "
+                        x-show="show"
+                        x-transition
+                        class="m-4 p-4 rounded-lg bg-red-200 text-red-700"
+                    >
+                        {{ session('erreur') }}
+                    </div>
+                @endif
            <form wire:submit="save" 
             @class(['flex flex-col gap-5  overflow-y-scroll no-scrollbar overflow-x-hidden sm:mt-0 mt-15',
                     'dark:text-gray-400'
@@ -135,7 +169,39 @@ x-transition.duration.300ms
                     </div>
                 </div>
 
-            
+                @php
+                    $role = Auth::user()->roles->first()->nom ?? '';
+                    $isAdmin = $role = 'Administrateur';
+                    $isSecretaireGenerale = $role == "Secrétaire générale";
+                    $doyenFaculte = $role == "Doyen de faculté";
+                    $VicedoyenFaculte = $role == "Vice-doyen de faculté";
+                    $SecretaireFaculte = $role == "Secretaire faculte";
+                    $Secrétaireadjoint = $role == "Secrétaire adjoint";
+                @endphp  
+                
+                @if ($isAdmin ||  $isSecretaireGenerale || $doyenFaculte )
+                    <div class=" flex flex-row">
+                        <label class="font-bold text-gray-500"  for="niveau">
+                            Session
+                        </label>
+                        <div class="relative w-[90%]  pb-4">
+                        <select wire:model.live="session" @class([
+                        'outline-0 border-b border-gray-600 mx-3 w-full',
+                        'border-red-600'=>$errors->has('session'),
+                        'dark:text-ugnh-blueClair dark:border-gray-600'
+                        ]) name="" id="session">
+                            <option class="dark:text-gray-200 dark:bg-gray-600" value="">Choisir la session</option>
+
+                            {{-- @foreach ($this->Facultes as $faculte) --}}
+                                <option class="dark:text-gray-200 dark:bg-gray-600" value="1">I</option>
+                                <option class="dark:text-gray-200 dark:bg-gray-600" value="2">II</option>
+                            {{-- @endforeach --}}
+                        </select>
+                        @error('session') <p class="text-red-500 text-[10px] absolute  mx-3 bottom-0">{{ $message }}</p> @enderror
+                        </div>
+                    </div>
+                @endif
+
                 <div class=" flex flex-row">
                     <label class="font-bold text-gray-500"  for="sexe">
                         Etudiant
@@ -182,7 +248,7 @@ x-transition.duration.300ms
                     <option class="dark:text-gray-200 dark:bg-gray-600" value=""></option>
                     <option class="dark:text-gray-200 dark:bg-gray-600" value="Intra">Intra</option>
                     <option class="dark:text-gray-200 dark:bg-gray-600" value="Examen Final">Examen Final</option>
-                    <option class="dark:text-gray-200 dark:bg-gray-600" value="Note de rattrapage">Note de rattrapage</option>
+                    {{-- <option class="dark:text-gray-200 dark:bg-gray-600" value="Note de rattrapage">Note de rattrapage</option> --}}
                 </select>
                 @error('typeEvaluation') <p class="text-red-500 text-[10px] absolute  mx-3 bottom-0">{{ $message }}</p> @enderror
                 </div>
@@ -251,7 +317,7 @@ x-transition.duration.300ms
 
 
             <button @class([
-                'flex flex-row bg-ugnh-blueClair text-gray-600 dark:text-gray-600 dark:border dark:border-gray-600 p-2 rounded gap-2'
+                'flex  hidden flex-row bg-ugnh-blueClair text-gray-600 dark:text-gray-600 dark:border dark:border-gray-600 p-2 rounded gap-2'
             ])>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -271,7 +337,7 @@ x-transition.duration.300ms
             <div
             x-data="{ show: false, message: '' }"
 
-            x-on:successNote.window="
+            x-on:p.window="
                 show = true;
                 message = $event.detail.message;
                 setTimeout(() => show = false, 5000);

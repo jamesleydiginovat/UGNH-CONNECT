@@ -10,6 +10,7 @@ use Livewire\WithPagination;
 class FicheTransaction extends Component
 {
     use WithPagination;
+    public $search;
     protected $listeners = [
     'refreshTable'=>'$refresh',
     ];
@@ -29,9 +30,21 @@ class FicheTransaction extends Component
 
     public function getFicheTransactionProperty()
     {
-        return fichePaiementEtudiant::where('anneAcademique',optional($this->anneeAccademiqueActive())->libelle)
+        if($this->search !=""){
+           return fichePaiementEtudiant::where('anneAcademique',optional($this->anneeAccademiqueActive())->libelle)
+                                        ->where(function ($q) {
+                                            $q->where('matricule', 'ILIKE', "%{$this->search}%")
+                                            ->orWhere('codeTransaction', 'ILIKE', "%{$this->search}%");
+                                        })
                                         ->latest()
                                         ->paginate(20);
+        }
+        else{
+            return fichePaiementEtudiant::where('anneAcademique',optional($this->anneeAccademiqueActive())->libelle)
+                                        ->latest()
+                                        ->paginate(20);
+        }
+        
         
     }
     public function render()

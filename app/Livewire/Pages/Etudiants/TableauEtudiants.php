@@ -13,6 +13,7 @@ use App\Models\notificationModel;
 use App\Models\paimentEtudiantModel;
 use App\Models\utilisateurModel;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -216,8 +217,17 @@ class TableauEtudiants extends Component
         }
 
         // 📦 requête de base
+        // $query = etudiantModel::with('faculte')
+        //     ->where('status', $this->status != "" ? $this->status : 'Etudiant');
+
         $query = etudiantModel::with('faculte')
-            ->where('status', $this->status != "" ? $this->status : 'Etudiant');
+        ->where('status', $this->status != "" ? $this->status : 'Etudiant')
+        ->whereExists(function ($q) {
+            $q->select(DB::raw(1))
+            ->from('paiement_etudiants')
+            ->whereColumn('paiement_etudiants.matriculeEtudiant', 'etudiants_tb.matricule')
+            ->where('paiement_etudiants.anneAccademique', $this->anneeAccademiqueActive()->libelle);
+        });
 
         // 🔎 recherche globale
         if ($this->search != "") {
@@ -269,7 +279,23 @@ class TableauEtudiants extends Component
         broadcast(new updatedTable(''));
     }
 
+    public function RecupererEtudiant($status, $id){
+         $etudiant = etudiantModel::with('faculte')->where('id',$id)->first();
+         if($status =="Etudiant"){
+             
+            $etudiant::find($id)->update([
+            'status'=>$status
+            ]);
 
+            $this->dispatch('success',message:"Action reusit" );
+            
+            $action ="recuperation d'un etudiant";
+            
+            audit(Auth::user()->personnel->code, $action, $etudiant->matricule);
+            
+            broadcast(new updatedTable(''));
+         }
+    }
     public function changerStatus($status, $id){
         $etudiant = etudiantModel::with('faculte')->where('id',$id)->first();
 

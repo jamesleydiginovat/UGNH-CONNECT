@@ -402,8 +402,10 @@
                                 <h1 class="text-xl font-bold">Bultins</h1>
                                 
                                 <div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
-
-                                    @foreach ($this->bultins as  $bultins )
+                                    {{-- @php
+                                        dd($this->getbultins($anneAcademique));
+                                    @endphp --}}
+                                    @foreach ($this->getbultins($anneAcademique) as  $bultins )
                                         <div class="bg-white dark:bg-gray-500 rounded-lg shadow-sm border border-gray-600 p-2 hover:shadow-xl transition duration-300 flex flex-row items-center justify-between">
                                             <div>
                                                 {{-- <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -417,6 +419,35 @@
 
                                             <div wire:click="voirLePdf('{{ $bultins->matricule }}')">
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                                                <path d="M11.47 1.72a.75.75 0 011.06 0l3 3a.75.75 0 01-1.06 1.06l-1.72-1.72V7.5h-1.5V4.06L9.53 5.78a.75.75 0 01-1.06-1.06l3-3zM11.25 7.5V15a.75.75 0 001.5 0V7.5h3.75a3 3 0 013 3v9a3 3 0 01-3 3h-9a3 3 0 01-3-3v-9a3 3 0 013-3h3.75z" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="mt-10 ">
+                                <h1 class="text-xl font-bold">Documents</h1>
+                                
+                                <div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+
+                                    @foreach ($this->documents($anneAcademique) as  $document )
+                                        <div class="bg-white dark:bg-gray-500 rounded-lg shadow-sm border border-gray-600 p-2 hover:shadow-xl transition duration-300 flex flex-row items-center justify-between">
+                                            <div>
+                                                {{-- <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
+                                                </svg> --}}
+                                                <div class="text-sm">
+                                                    <p>NOM: {{ $document->nom }} </p>
+                                                </div>
+                                            </div>
+
+                                            <div  wire:click="voirLeDocPdf('{{ $document->nom }}')">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 cursor-pointer hover:text-amber-400">
                                                 <path d="M11.47 1.72a.75.75 0 011.06 0l3 3a.75.75 0 01-1.06 1.06l-1.72-1.72V7.5h-1.5V4.06L9.53 5.78a.75.75 0 01-1.06-1.06l3-3zM11.25 7.5V15a.75.75 0 001.5 0V7.5h3.75a3 3 0 013 3v9a3 3 0 01-3 3h-9a3 3 0 01-3-3v-9a3 3 0 013-3h3.75z" />
                                                 </svg>
                                             </div>

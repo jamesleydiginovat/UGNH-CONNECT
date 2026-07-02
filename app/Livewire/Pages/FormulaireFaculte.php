@@ -32,6 +32,16 @@ class FormulaireFaculte extends Component
     public function mount(){
         $this->code = $this->generateCodeFaculte();
     }
+
+    public function resetForm(){
+        $this->reset([
+            'code',
+            'niveau',
+            'nom'
+        ]);
+
+        $this->code = $this->generateCodeFaculte();
+    }
     
 
     public function save()

@@ -73,6 +73,7 @@ class FormulaireEtudiants extends Component
     {
 
     $seizeAns = Carbon::now()->subYears(16)->format('Y-m-d');
+    $A50Ans = Carbon::now()->subYears(16)->format('Y-m-d');
     return [
 
             'matricule' => [
@@ -80,17 +81,30 @@ class FormulaireEtudiants extends Component
                 Rule::unique('etudiants_tb', 'matricule')
                     ->ignore($this->etudiants?->id)
             ],
+
+
+            'nif_cin' => [
+                'required',
+                'min:10',
+                'max:30',
+                Rule::unique('etudiants_tb', 'nif_cin')
+                    ->ignore($this->etudiants?->id)
+            ],
+
+            'email' => [
+                'nullable',
+                Rule::unique('etudiants_tb', 'email')
+                    ->ignore($this->etudiants?->id)
+            ],
             'nom' => 'required|min:3|max:50',
             'prenom' => 'required|min:3|max:50',
             'sexe' => 'required|in:M,F',
             'adresse' => 'required|min:5|max:150',
             'telephone' => 'required|min:8|max:20',
-            'dateNaissance' => 'required|date|before_or_equal:' . $seizeAns,
+            'dateNaissance' => 'required|date|before_or_equal:' . $seizeAns.'after_or_equal:' .$A50Ans,
             'lieuNaissance' => 'required|min:3|max:100',
-            'nif_cin' => 'nullable|min:5|max:30',
             'groupeSanguin' => 'nullable|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
             'conditionMatrimoniale' => 'required',
-            'email' => 'nullable|email',
             'occupationAcctuelle' => 'nullable|min:5|max:100',
             'lieuDeTravail' => 'nullable|min:5|max:100',
             'nomPrenomPersonneR' => 'required|min:5|max:100',
@@ -137,7 +151,7 @@ class FormulaireEtudiants extends Component
             'nomPrenomPersonneR.required' => 'Nom de la personne de référence requis',
 
             'telephonePersonneR.required' => 'Téléphone de référence requis',
-
+            'nif_cin.required' => 'CIN/NIF requis',
             'lien.required' => 'Lien requis',
 
             'niveauBac.required' => 'Niveau Bac requis',

@@ -166,6 +166,21 @@ class ValidationNotes extends Component
 
     public function admissionEchouee($matricule)
     {
+         $anneeActive = annnee_accademiqueModel::where('active', true)->first();
+
+        $anneeAcademiqueSuivant = annnee_accademiqueModel::where('date_debut', '>', $anneeActive->date_fin)
+            ->orderBy('date_debut', 'asc')
+            ->first();
+
+        if (!$anneeAcademiqueSuivant) {
+
+            $this->dispatch(
+                'erreur',
+                message: "Aucune année académique suivante n'a été trouvée."
+            );
+
+            return;
+        }
         $etudiant = etudiantModel::with('faculte')
                         ->where('matricule', $matricule)
                         ->first();
@@ -191,7 +206,7 @@ class ValidationNotes extends Component
             paimentEtudiantModel::create([
                     'matriculeEtudiant' => $matricule,
                     'codeFaculte' => optional($etudiant->faculte->first())->codeFac,
-                    'anneAccademique'=>$this->anneeAccademique,  //  a arranger 
+                    'anneAccademique'=>$anneeAcademiqueSuivant->libelle,  //  a arranger 
                     'niveau' => $etudiant->niveau,
                     'session' => 1,
                     'premierVersement' => 0,
@@ -204,7 +219,7 @@ class ValidationNotes extends Component
             paimentEtudiantModel::create([
                     'matriculeEtudiant' => $matricule,
                     'codeFaculte' => optional($etudiant->faculte->first())->codeFac,
-                    'anneAccademique'=>$this->anneeAccademique,
+                    'anneAccademique'=>$anneeAcademiqueSuivant->libelle,
                     'niveau' => $etudiant->niveau,
                     'session' => 2,
                     'premierVersement' => 0,

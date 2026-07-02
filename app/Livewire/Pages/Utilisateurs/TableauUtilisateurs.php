@@ -3,7 +3,9 @@
 namespace App\Livewire\Pages\Utilisateurs;
 
 use App\Events\updatedTable;
+use App\Models\faculteModel;
 use App\Models\personnelsModel;
+use App\Models\roleUtilisateur;
 use App\Models\utilisateurModel;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -26,56 +28,53 @@ class TableauUtilisateurs extends Component
         public string $filterStatut;
 
 
-        public function getUtilisateursProperty(){
-        if($this->search!=""){
-            return DB::table('utilisateurs_tb')
-                        ->join('personnels_tb', 'utilisateurs_tb.codePersonnel', '=', 'personnels_tb.code')
-                        ->when($this->search, function ($query) {
-                            $query->where(function ($q) {
-                                $q->where('personnels_tb.nom', 'ILIKE', "%{$this->search}%")
-                                ->orWhere('personnels_tb.prenom', 'ILIKE', "%{$this->search}%")
-                                ->orWhere('utilisateurs_tb.nomUtilisateur', 'ILIKE', "%{$this->search}%")
-                                ->orWhere('personnels_tb.code', 'ILIKE', "%{$this->search}%");
-            });
-        })
-        ->orderBy('utilisateurs_tb.id', 'ASC')
-        ->paginate(8);           
-        }
-        else{
-            if($this->filterSexe==""){
-                return  DB::table('utilisateurs_tb')
-                            ->join('personnels_tb', 'utilisateurs_tb.codePersonnel', '=', 'personnels_tb.code')
-                            ->paginate(8);
-            }
-            elseif($this->filterSexe!=""){
+        public function getUtilisateursProperty()
+        {
+            $query = DB::table('utilisateurs_tb')
+                        ->join(
+                            'personnels_tb',
+                            'utilisateurs_tb.codePersonnel',
+                            '=',
+                            'personnels_tb.code'
+                        );
 
-                return DB::table('utilisateurs_tb')
-                        ->join('personnels_tb', 'utilisateurs_tb.codePersonnel', '=', 'personnels_tb.code')
-                        ->when($this->filterSexe, function ($query) {
-                            $query->where(function ($q) {
-                                $q->where('personnels_tb.sexe', 'ILIKE', "%{$this->filterSexe}%");
-                    });
-                })
-                ->orderBy('utilisateurs_tb.id', 'ASC')
-                ->paginate(8);           
+            // Recherche
+            if (!empty($this->search)) {
+                $query->where(function ($q) {
+                    $q->where('personnels_tb.nom', 'ILIKE', "%{$this->search}%")
+                    ->orWhere('personnels_tb.prenom', 'ILIKE', "%{$this->search}%")
+                    ->orWhere('utilisateurs_tb.nomUtilisateur', 'ILIKE', "%{$this->search}%")
+                    ->orWhere('personnels_tb.code', 'ILIKE', "%{$this->search}%");
+                });
             }
-            elseif($this->filterStatut!=""){
-                // dd("jjamesley hpilippe0");
-                return DB::table('utilisateurs_tb')
-                        ->join('personnels_tb', 'utilisateurs_tb.codePersonnel', '=', 'personnels_tb.code')
-                        ->when($this->filterStatut, function ($query) {
-                            $query->where(function ($q) {
-                                $q->where('personnels_tb.statut', '=', $this->filterStatut);
-                    });
-                })
-                ->orderBy('utilisateurs_tb.id', 'ASC')
-                ->paginate(8);           
-            }
-            
-           
-        }
 
-    }
+            // Filtre par sexe
+            if (!empty($this->filterFonction)) {
+                $query->where('personnels_tb.fonction', 'ILIKE', "%{$this->filterFonction}%");
+            }
+
+
+            // Filtre par role
+            if (!empty($this->filterSexe)) {
+                $query->where('personnels_tb.sexe', 'ILIKE', "%{$this->filterSexe}%");
+            }
+
+            // Filtre par statut
+            if (!empty($this->filterStatut)) {
+                if($this->filterStatut =="Horsligne"){
+                    $query->where('utilisateurs_tb.statut', 0);
+                }
+                else{
+                    $query->where('utilisateurs_tb.statut', $this->filterStatut);
+                }
+
+                
+            }
+
+            return $query
+                    ->orderBy('utilisateurs_tb.id', 'ASC')
+                    ->paginate(8);
+        }
 
     public $utilisateurSelectionner;
     public function selectionUtilisateur($id){
@@ -114,6 +113,17 @@ class TableauUtilisateurs extends Component
 
     public function sessionEdit($id){
         $this->dispatch('edit-utilisateur', id: $id);
+    }
+
+    public function nomFacRole($nomUtilisateur){
+        $codeFac = roleUtilisateur::where('nomUtilisateur', $nomUtilisateur)->value('codeFac');
+
+        if($codeFac){
+            return faculteModel::where('codeFac', $codeFac)->value('nom');
+        }
+        else{
+            return "";
+        }
     }
 
     public function render()

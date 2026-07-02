@@ -4,6 +4,7 @@ namespace App\Livewire\Pages\Dossiers;
 
 use App\Models\bultinEtudiantModel;
 use App\Models\coursModel;
+use App\Models\documentsModel;
 use App\Models\etudianFaculteModel;
 use App\Models\etudiantModel;
 use App\Models\faculteModel;
@@ -133,8 +134,17 @@ class DossierPage extends Component
             ->get();
     }
 
-    public function getbultinsProperty(){
-        return bultinEtudiantModel::where('matricule', $this->dossierEtudiant->matricule)->get();
+    public function getbultins($anneeAcademique){
+        return bultinEtudiantModel::where('matricule', $this->dossierEtudiant->matricule)
+                                    ->where('anneeAcademique', $anneeAcademique)
+                                    ->get();
+    }
+
+    public function documents($anneAcademique){
+        $valeur = 'Fiche_d_inscription'.$this->dossierEtudiant->matricule;
+        return documentsModel::where('nom', 'ILIKE', "%{$valeur}%")
+                                ->where('anneeAcademique', $anneAcademique)
+                                ->get();
     }
 
     public function voirLePdf($matricule)
@@ -144,6 +154,16 @@ class DossierPage extends Component
         $this->dispatch('oppen-df', url: $path);
         
     }
+
+
+    public function voirLeDocPdf($nom)
+    {   
+        $path = asset('storage/pdf/' . $nom);
+        $this->dispatch('oppen-df', url: $path);
+        
+    }
+
+    
 
     public function render() 
     {

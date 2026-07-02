@@ -46,7 +46,7 @@
         
                 <button 
                     @click="progressBar = true "
-                    wire:click="export" class="flex flex-row gap-2 bg-ugnh-blueFonce p-2 rounded-sm">
+                    wire:click="export" class="flex flex-row gap-2 bg-ugnh-blueFonce p-2 rounded-sm text-white">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
                     </svg>
@@ -62,7 +62,7 @@
                     </button>
                 </a> --}}
 
-                <button wire:click="isFullInformation" @click="fullInformation = !fullInformation" class="flex flex-row gap-2 bg-ugnh-blueFonce p-2 rounded-sm">
+                <button wire:click="isFullInformation" @click="fullInformation = !fullInformation" class="flex flex-row gap-2 bg-ugnh-blueFonce p-2 rounded-sm text-white">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
                     </svg>
@@ -100,7 +100,7 @@
                         <div @class([
                             'flex flex-row items-center gap-1 bg-blue-50 dark:bg-gray-600 shadow-sm rounded p-1'
                         ])>
-                            <div @class(['bg-ugnh-blueFonce p-1 rounded'])>
+                            <div @class(['bg-ugnh-blueFonce p-1 rounded text-white'])>
                                 {{-- <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 text-gray-50  ">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
                                 </svg> --}}
@@ -109,7 +109,7 @@
                             
 
                             <select  wire:model.live="filterSexe" @class([
-                            'outline-0 text-gray-600 ',
+                            'outline-0 text-gray-600',
                             'dark:text-ugnh-blueClair dark:border-gray-600'
                             ])>
                                 <option class="dark:text-ugnh-blueFonce" value="">Sexe</option>
@@ -125,7 +125,7 @@
                         <div @class([
                             'flex flex-row items-center gap-1 bg-blue-50 dark:bg-gray-600 shadow-sm rounded p-1'
                         ])>
-                            <div @class(['bg-ugnh-blueFonce p-1 rounded'])>
+                            <div @class(['bg-ugnh-blueFonce p-1 rounded text-white'])>
                                 {{-- <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 text-gray-50  ">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
                                 </svg> --}}
@@ -153,7 +153,7 @@
                         <div @class([
                             'flex flex-row items-center gap-1 bg-blue-50 dark:bg-gray-600 shadow-sm rounded p-1'
                         ])>
-                            <div @class(['bg-ugnh-blueFonce p-1 rounded'])>
+                            <div @class(['bg-ugnh-blueFonce p-1 rounded text-white'])>
                                 {{-- <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 text-gray-50  ">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
                                 </svg> --}}
@@ -180,8 +180,8 @@
 
 
                     <div class="flex flex-row gap-3 ">
-                        <button  @click="modalConfirmation = !modalConfirmation" class="bg-ugnh-blueFonce p-2 cursor-pointer hover:scale-110 transition-all ease-in-out duration-200 rounded-sm">Dossier personnels</button>
-                        <button wire:click="putValue" class="bg-ugnh-blueFonce p-2 cursor-pointer hover:scale-110 transition-all ease-in-out duration-200 rounded-sm">Les personnels utilisateurs</button>
+                        <button  @click="modalConfirmation = !modalConfirmation" class="bg-ugnh-blueFonce p-2 cursor-pointer hover:scale-110 transition-all ease-in-out duration-200 rounded-sm text-white">Dossier personnels</button>
+                        <button wire:click="putValue" class="bg-ugnh-blueFonce p-2 cursor-pointer hover:scale-110 transition-all ease-in-out duration-200 rounded-sm text-white">Les personnels utilisateurs</button>
                     </div>
                 </div>
 

@@ -461,6 +461,20 @@ x-init="init()"
                 $hasPermission = Auth::check() && Auth::user()->hasPermission('Gestion des évaluations et résultats');
             @endphp
 
+             @php
+                $role = Auth::user()->roles->first()->nom ?? '';
+
+                $isAdmin = $role == "Administrateur";
+                $isSecretaireGenerale = $role == "Secrétaire générale";
+                $doyenFaculte = $role == "Doyen de faculté";
+                $VicedoyenFaculte = $role == "Vice-doyen de faculté";
+                $SecretaireFaculte = $role == "Secretaire faculte";
+                $Comptable = $role == "Comptable";
+                $Secrétaireadjoint = $role == "Secrétaire adjoint";
+                
+            @endphp
+
+            @if ( $isAdmin || $isSecretaireGenerale )
             <a
                 @click="active='Validation des resultats'; localStorage.setItem('activeMenu','Validation des resultats')"
                 :class="active==='Validation des resultats'
@@ -498,6 +512,7 @@ x-init="init()"
                     </svg>
                 @endif
             </a>
+            @endif
             {{-- ------- --}}
 
 

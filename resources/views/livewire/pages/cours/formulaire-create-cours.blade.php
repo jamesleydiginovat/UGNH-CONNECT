@@ -174,7 +174,7 @@ x-transition.duration.300ms
                                     {{-- <option class="dark:text-ugnh-blueFonce" value="">Choisir le personnel</option> --}}
                                     <option class="dark:text-gray-200 dark:bg-gray-700" value="">Choisir le professeurs</option>
                                     @foreach ($this->Professeurs as $professeur)
-                                         <option class="dark:text-gray-200 dark:bg-gray-700" value="{{ $professeur->codeProf }}">{{ $professeur->nom." ".$professeur->prenom }}</option>
+                                         <option class="dark:text-gray-200 dark:bg-gray-700" value="{{ $professeur->codeProf }}">{{ $professeur->nom." ".$professeur->prenom. "( ".$professeur->specialite." )" }}</option>
                                     @endforeach
                                 </select>
                                 @error('codeProf') <p class="text-red-500 text-[10px] absolute  mx-3 bottom-0">{{ $message }}</p> @enderror

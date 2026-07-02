@@ -96,20 +96,78 @@
     </div>
 
 
-    <div class="mt-5">
-    <div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+    <div class="mt-6">
 
-        @foreach ($this->DossierEtudiants as $dossier)
-            <div wire:click="DossierEtudiant({{ $dossier->id }})" @click ="tableSlide =!tableSlide" class="bg-white dark:bg-gray-700 dark:text-gray-200 cursor-pointer dark:hover:bg-gray-600 rounded-lg shadow-sm border border-gray-600 p-2 hover:shadow-xl transition duration-300 flex flex-col justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-15 h-15">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
-                </svg>
-                <div class="text-sm">
-                    <p ><span class="font-bold">Matricule: </span>{{ $dossier->matricule }}</p>
-                    <p>{{ $dossier->nom}} {{ $dossier->prenom }}</p>
-                </div>
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold text-gray-700 dark:text-gray-100">
+                Dossiers des Étudiants
+            </h2>
+
+            <div class="bg-indigo-100 dark:bg-ugnh-blueFonce text-ugnh-blueFonce dark:text-indigo-300 px-3 py-1 rounded-full text-xs font-semibold">
+                {{ count($this->DossierEtudiants) }} dossiers
             </div>
-        @endforeach
+        </div>
+
+        <!-- Grid -->
+        <div class="grid gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5">
+
+            @foreach ($this->DossierEtudiants as $dossier)
+
+                <div
+                    wire:click="DossierEtudiant({{ $dossier->id }})"
+                    @click="tableSlide = !tableSlide"
+
+                    class="group relative overflow-hidden rounded-xl border border-gray-200 dark:border-gray-600
+                    bg-white dark:bg-gray-800 p-3 shadow-sm hover:shadow-lg hover:-translate-y-1
+                    transition-all duration-300 cursor-pointer"
+                >
+
+                    <!-- Icon -->
+                    <div class="flex items-center gap-3">
+
+                        <div class="w-10 h-10 flex items-center justify-center rounded-lg bg-ugnh-blueFonce text-white shadow">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.8"
+                                stroke="currentColor"
+                                class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
+                            </svg>
+                        </div>
+
+                        <!-- Infos -->
+                        <div class="min-w-0">
+
+                            <p class="text-[10px] text-gray-400 uppercase">
+                                Matricule
+                            </p>
+
+                            <p class="font-semibold text-gray-800 dark:text-white text-sm truncate">
+                                {{ $dossier->matricule }}
+                            </p>
+
+                            <p class="text-xs text-gray-500 dark:text-gray-300 truncate">
+                                {{ $dossier->nom }} {{ $dossier->prenom }}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="mt-2 flex justify-end">
+                        <span class="text-[10px] text-ugnh-blueFonce dark:text-ugnh-blueFonce font-semibold">
+                            Ouvrir →
+                        </span>
+                    </div>
+
+                </div>
+
+            @endforeach
+
+        </div>
     </div>
-</div>
 </section>

@@ -29,7 +29,7 @@
                         $reste = $total - $dejaPayer;
 
                     @endphp
-                    {{ $reste+6200  }} HTG
+                    {{ $reste  }} HTG
                 </h1>
             </div>
 

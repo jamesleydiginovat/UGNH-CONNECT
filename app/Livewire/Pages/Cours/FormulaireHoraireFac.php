@@ -149,7 +149,7 @@ class FormulaireHoraireFac extends Component
         // Message succès
         $this->dispatch('success', message: 'Horaire ajouté avec succès.');
 
-        audit(Auth::user()->personnel->code, "Ajour d'un horaire", $this->codeCours, request()->ip());
+        audit(Auth::user()->personnel->code, "Ajour d'un horaire", $this->cours, request()->ip());
         broadcast(new updatedTable(''));
 
         // Reset des champs (optionnel mais recommandé)

@@ -104,15 +104,15 @@
                     <div class="flex items-center gap-2">
 
                         <!-- VIEWED -->
-                        <button wire:click="markAsSeen({{ $notification->notification_id }})"
+                        {{-- <button wire:click="markAsSeen({{ $notification->notification_id }})"
                                 class="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition">
                             👁️
-                        </button>
+                        </button> --}}
 
                         <!-- DETAILS -->
-                        <button wire:click="showDetail({{ $notification->id }})"
+                        <button  wire:click="markAsSeen({{ $notification->notification_id }})"
                                 class="px-2 py-1 text-xs bg-blue-500 hover:bg-blue-600 text-white rounded transition">
-                            Voir
+                            👁️Voir
                         </button>
 
                     </div>

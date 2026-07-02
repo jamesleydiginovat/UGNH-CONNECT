@@ -86,9 +86,9 @@
         </button>
 
         <!-- Info -->
-        <p class="p-1 bg-ugnh-blueClair dark:bg-gray-800 dark:text-gray-300 rounded">
-            Lorem, ipsum dolor sit amet
-        </p>
+        {{-- <p class="p-1 bg-ugnh-blueClair dark:bg-gray-800 dark:text-gray-300 rounded">
+           
+        </p> --}}
 
     </div>
 </div>

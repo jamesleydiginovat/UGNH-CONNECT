@@ -101,7 +101,7 @@ class Welcome extends Component
                 'user_code' => $personnel->code,
             ]);
 
-            return redirect()->route('connexion'); // 🔥 REDIRECT
+            return redirect()->route('login'); // 🔥 REDIRECT
         }
 
         // ❌ aucun trouvé

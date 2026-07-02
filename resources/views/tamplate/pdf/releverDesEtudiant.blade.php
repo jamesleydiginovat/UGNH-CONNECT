@@ -245,7 +245,7 @@
             <!-- FACULTE -->
             <div class="faculte-box">
                 <p>Faculté des {{ $infos->faculte->first()?->nom ?? '' }}</p>
-                <p>Bulletin pour l’année académique 2026-2027</p>
+                <p>Relever des notes pour l’année académique 2026-2027</p>
             </div>
 
             <!-- INFOS ETUDIANT -->
@@ -277,11 +277,11 @@
 
             <thead>
                 <tr>
-                    <th>Nom du cours</th>
+                    <th>Cours</th>
                     <th>Note</th>
-                    <th>Reprise</th>
+                    {{-- <th>Reprise</th>
                     <th>Crédits</th>
-                    <th>Mention</th>
+                    <th>Mention</th> --}}
                 </tr>
             </thead>
 
@@ -322,7 +322,7 @@
 
                             <td>{{ $noteFinal }}</td>
 
-                            <td>
+                            {{-- <td>
                                 @if (($noteFinal < 65 && is_null($note->noteRattrapage) && !is_null($note->noteIntra) && !is_null($note->examenFinal)))
                                     Oui
                                 @elseif (is_null($note->noteIntra) || is_null($note->examenFinal))
@@ -330,9 +330,9 @@
                                 @else
                                     {{ $note->noteRattrapage ?? 'Non' }}
                                 @endif
-                            </td>
+                            </td> --}}
 
-                            <td>{{ $note->credit ?? 0 }}</td>
+                            {{-- <td>{{ $note->credit ?? 0 }}</td> --}}
 
                             @php
                                 $mention = function($note) {
@@ -345,9 +345,9 @@
                                 };
                             @endphp
 
-                            <td>
+                            {{-- <td>
                                 {{ $noteFinal != '-' ? $mention($noteFinal) : '-' }}
-                            </td>
+                            </td> --}}
                         </tr>
 
                         @php
@@ -362,7 +362,7 @@
 
                     @endforeach
 
-                    <tr>
+                    {{-- <tr>
                         <td colspan="5">
                             <strong>Total :</strong> {{ $total }}
                         </td>
@@ -378,7 +378,7 @@
                                 0
                             @endif
                         </td>
-                    </tr>
+                    </tr> --}}
 
                     @php
                         $moyenne = $nombreMatiere > 0
@@ -403,7 +403,7 @@
         </table>
 
         <!-- RESUME -->
-        <table class="resume-table">
+        {{-- <table class="resume-table">
             <tr>
                 <th>
                     Total Général :
@@ -432,7 +432,7 @@
                 </tr>
              @endif
             
-        </table>
+        </table> --}}
 
         <!-- SIGNATURE -->
         <div class="signature-section">
@@ -440,7 +440,7 @@
             <table class="signature-table">
                 <tr>
                     <td class="text-left">
-                        Fait à l’UGNH, le {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}
+                        Fait à l’UGNH, le 27 Avril 2026
                     </td>
 
                     <td>

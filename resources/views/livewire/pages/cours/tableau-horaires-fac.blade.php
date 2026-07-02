@@ -198,7 +198,8 @@
 
                                 <td class="p-1 border-r border-gray-300 dark:border-gray-700 font-bold">
                                     {{-- <p>{{ $cours->codeCours}}</p> --}}
-                                    <p>{{ $coursSample->faculte->nom ?? '---'}} ({{ $niveau }})</p>
+                                    <p>{{ $coursSample->faculte->nom ?? '---'}}</p>
+                                    <p class="text-yellow-600">Niveau:{{ $niveau }} Session:{{ $session }}</p>
                                 </td>
 
 

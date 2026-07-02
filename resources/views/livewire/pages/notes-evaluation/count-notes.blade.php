@@ -42,8 +42,7 @@
                 Voir les tableaux des notes
             </button>
 
-            <button
-                @click="formHoraire = !formHoraire"
+            {{-- <button
                 class="flex items-center justify-center gap-2 border border-ugnh-blueFonce text-ugnh-blueFonce dark:text-gray-200 hover:bg-ugnh-blueFonce hover:text-white px-3 py-3 rounded-xl transition-all duration-300 shadow hover:shadow-lg w-full sm:w-auto"
             >
                 <svg xmlns="http://www.w3.org/2000/svg"
@@ -59,7 +58,7 @@
                 </svg>
 
                 Modifier une note
-            </button>
+            </button> --}}
 
         </div>
     </div>

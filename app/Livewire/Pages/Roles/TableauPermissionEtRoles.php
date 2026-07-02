@@ -45,6 +45,7 @@ class TableauPermissionEtRoles extends Component
         $this->saveOrDeleteValue = $value;
     }
     public function save($role_id){
+    try {
         if($this->saveOrDeleteValue == "save"){
             role_permissionModel::create([
             'role_id' => $role_id,
@@ -61,6 +62,10 @@ class TableauPermissionEtRoles extends Component
                                     ->delete();
             broadcast(new updatedTable(''));
         }
+    } catch (\Throwable $th) {
+        //throw $th;
+    }
+       
         
     }
 

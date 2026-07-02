@@ -426,7 +426,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4.867 19.125h.008v.008h-.008v-.008z" />
                     </svg>
 
-                    Transactions recentes</h1>
+                    Actions recentes</h1>
                 </div>
 
 

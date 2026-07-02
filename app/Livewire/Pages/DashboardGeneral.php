@@ -4,6 +4,7 @@ namespace App\Livewire\Pages;
 
 use Livewire\Component;
 use App\Events\TestEvent;
+use App\Models\annnee_accademiqueModel;
 use App\Models\auditsModel;
 use App\Models\etudiantModel;
 use App\Models\faculteModel;
@@ -12,6 +13,7 @@ use App\Models\personnelsModel;
 use App\Models\professeurModel;
 use App\Models\utilisateurModel;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class DashboardGeneral extends Component
 {
@@ -56,15 +58,23 @@ class DashboardGeneral extends Component
         return $query->orderBy('id', 'ASC')->get();
     }
 
+    public function anneeAccademiqueActive(){
+        return annnee_accademiqueModel::where('active', true)->first();
+    }
+
     public function getnombreEtudiantProperty(){
 
-        if($this->codeFac ==""){
-            return etudiantModel::where('status','Etudiant')->count('id');
-        }
-        else{
-            return etudiantModel::where('codeFac', $this->codeFac)->count('id'); 
-            // dd('james');
-        }
+        return etudiantModel::where('status', 'Etudiant')
+        ->when($this->codeFac != "", function ($query) {
+            $query->where('codeFac', $this->codeFac);
+        })
+        ->whereExists(function ($q) {
+            $q->select(DB::raw(1))
+            ->from('paiement_etudiants')
+            ->whereColumn('paiement_etudiants.matriculeEtudiant', 'etudiants_tb.matricule')
+            ->where('paiement_etudiants.anneAccademique', $this->anneeAccademiqueActive()->libelle);
+        })
+        ->count('id');
         
     }
 

@@ -18,6 +18,7 @@ use Livewire\Attributes\On;
 use Livewire\Component;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class FormulairePaiementEtudiants extends Component
 {
@@ -146,8 +147,15 @@ class FormulairePaiementEtudiants extends Component
         ];
     }
 
-    public function anneeAccademiqueActive(){
+    public function anneeAccademiqueActive()
+    {
         return annnee_accademiqueModel::where('active', true)->first();
+    }
+
+    public $anneAcademiqueSelect=null;
+    public function getLesAnneeAcademiquesProperty()
+    {
+        return annnee_accademiqueModel::all();
     }
 
     private function getCodeFac()
@@ -169,6 +177,12 @@ class FormulairePaiementEtudiants extends Component
     {
         return etudiantModel::with('faculte')
             ->where('status', 'Etudiant')
+            ->whereExists(function ($q) {
+                $q->select(DB::raw(1))
+                ->from('paiement_etudiants')
+                ->whereColumn('paiement_etudiants.matriculeEtudiant', 'etudiants_tb.matricule')
+                ->where('paiement_etudiants.anneAccademique', $this->anneeAccademiqueActive()->libelle);
+            })
 
             // 🔐 Faculté liée à l'utilisateur connecté
             ->when($this->getCodeFac(), function ($q) {
@@ -193,11 +207,13 @@ class FormulairePaiementEtudiants extends Component
             ->get();
     }
 
-    public function getEtudiantSelectProperty(){
+    public function getEtudiantSelectProperty()
+    {
         return etudiantModel::with('faculte')->where('status','Etudiant')->where('nom', 'ILIKE', "%{$this->rechercherEtudiant}%")->orderBy('id','DESC')->get();
     }
 
-    public function mount(){
+    public function mount()
+    {
         $this->anneeAccademique = $this->anneeAccademiqueActive()->libelle;
         $this->dateTransaction= now()->format('Y-m-d');
         $this->numTransaction=$this->genererNumeroTransaction();
@@ -268,7 +284,8 @@ class FormulairePaiementEtudiants extends Component
     }
 
 
-    public function traitementPaiement(){
+    public function traitementPaiement()
+    {
         $paiementSessionI = paimentEtudiantModel::where('matriculeEtudiant', $this->matriculeEtudiant)
                         ->where('anneAccademique', $this->anneeAccademique)
                         ->where('session', '1')
@@ -398,7 +415,8 @@ class FormulairePaiementEtudiants extends Component
         // dd($this->traitementOK);  
     }
 
-    public function resetForm(){
+    public function resetForm()
+    {
        $this->reset([
             'numTransaction',
             'matriculeEtudiant',
@@ -408,11 +426,13 @@ class FormulairePaiementEtudiants extends Component
             'modePaiement',
             'motifPaiement',
         ]);
+        $this->resetErrorBag();
         $this->numTransaction=$this->genererNumeroTransaction();
     }
 
 
-    public function save(){
+    public function save()
+    {
         // dd("jamesley");
         $this->statut='Valide';
         $this->session='1';
@@ -435,7 +455,7 @@ class FormulairePaiementEtudiants extends Component
 
         $this->total=$this->premierVersement + $this->deuxiemeVersement + $this->troisiemeVersement;
         $this->totalS2=$this->premierVersementS2 + $this->deuxiemeVersementS2 + $this->troisiemeVersementS2;
-
+        
         // Vérifier si l'enregistrement existe déjà
         $paiement = paimentEtudiantModel::where('matriculeEtudiant', $this->matriculeEtudiant)
             ->where('anneAccademique', $this->anneeAccademique)
@@ -451,143 +471,135 @@ class FormulairePaiementEtudiants extends Component
             ->where('niveau', $this->niveau)
             ->where('session', 2)
             ->first();
-    if($this->traitementOK){
 
-    
-        if($this->oldTotalS1 < $this->oldPrixTotalS1){
-            if ($paiement) {
-            // L'enregistrement existe, vérifier si des champs ont changé
-            $fieldsToUpdate = [];
+    if($this->traitementOK)
+    {
 
-            if ($paiement->premierVersement != $this->premierVersement  ) {
-                $fieldsToUpdate['premierVersement'] = $this->premierVersement;
-                $this->motifPaiement='Premier versement session 1';
-            }
+       
+        if($this->oldTotalS1 < $this->oldPrixTotalS1)
+        {
+            if ($paiement) 
+            {
+                // L'enregistrement existe, vérifier si des champs ont changé
+                $fieldsToUpdate = [];
 
-            if ($paiement->deuxiemeVersement != $this->deuxiemeVersement) {
-                $fieldsToUpdate['deuxiemeVersement'] = $this->deuxiemeVersement;
-                $this->motifPaiement='Deuxieme versement session 1';
-            }
-
-            if ($paiement->troisiemeVersement != $this->troisiemeVersement) {
-                $fieldsToUpdate['troisiemeVersement'] = $this->troisiemeVersement;
-                $this->motifPaiement='Troisieme versement session 1';
-            }
-
-            if ($paiement->total != $this->total) {
-                $fieldsToUpdate['total'] = $this->total;
-            }
-
-            if ($paiement->statut != $this->statut) {
-                $fieldsToUpdate['statut'] = $this->statut;
-            }
-
-            // Mettre à jour uniquement si des champs ont changé
-            if (!empty($fieldsToUpdate)) {
-                $paiement->update($fieldsToUpdate);
-                $paiementEffectue = true;
-                $session_transaction = '1';
+                if ($paiement->premierVersement != $this->premierVersement  ) {
+                    $fieldsToUpdate['premierVersement'] = $this->premierVersement;
+                    $this->motifPaiement='Premier versement session 1';
                 }
 
-            } else {
-                // L'enregistrement n'existe pas, on crée un nouveau
-                paimentEtudiantModel::create([
-                    'matriculeEtudiant' => $this->matriculeEtudiant,
-                    'codeFaculte' => $this->codeFaculte,
-                    'anneAccademique'=>$this->anneeAccademique,
-                    'niveau' => $this->niveau,
-                    'session' => $this->session,
-                    'premierVersement' => $this->premierVersement ?? 0,
-                    'deuxiemeVersement' => $this->deuxiemeVersement ?? 0,
-                    'troisiemeVersement' => $this->troisiemeVersement ?? 0,
-                    'total' => $this->total,
-                    'statut' => $this->statut
-                ]);
-                $this->motifPaiement='Paiement session 1';
-                $paiementEffectue = true;
-                $session_transaction = '1';
+                if ($paiement->deuxiemeVersement != $this->deuxiemeVersement) {
+                    $fieldsToUpdate['deuxiemeVersement'] = $this->deuxiemeVersement;
+                    $this->motifPaiement='Deuxieme versement session 1';
+                }
+
+                if ($paiement->troisiemeVersement != $this->troisiemeVersement) {
+                    $fieldsToUpdate['troisiemeVersement'] = $this->troisiemeVersement;
+                    $this->motifPaiement='Troisieme versement session 1';
+                }
+
+                if ($paiement->total != $this->total) {
+                    $fieldsToUpdate['total'] = $this->total;
+                }
+
+                if ($paiement->statut != $this->statut) {
+                    $fieldsToUpdate['statut'] = $this->statut;
+                }
+
+                // Mettre à jour uniquement si des champs ont changé
+                if (!empty($fieldsToUpdate)) {
+                    $paiement->update($fieldsToUpdate);
+                    $paiementEffectue = true;
+                    $session_transaction = '1';
+                }
+
             }
+            
+            if($this->premierVersementS2 > 0)
+            {
+                if ($paiementS2) 
+                {
+                    // dd($this->premierVersementS2);
+                    // L'enregistrement existe, vérifier si des champs ont changé
+                    $fieldsToUpdate = [];
 
+                    if ($paiementS2->premierVersement != $this->premierVersementS2  ) {
+                        $fieldsToUpdate['premierVersement'] = $this->premierVersementS2;
+                        $this->motifPaiement='Permier versement session 2';
+                    }
 
-            if($this->total == $this->oldPrixTotalS1){
+                    if ($paiementS2->deuxiemeVersement != $this->deuxiemeVersementS2) {
+                        $fieldsToUpdate['deuxiemeVersement'] = $this->deuxiemeVersementS2;
+                        $this->motifPaiement='Deuxieme versement session 2';
+                    }
 
-                paimentEtudiantModel::create([
-                    'matriculeEtudiant' => $this->matriculeEtudiant,
-                    'codeFaculte' => $this->codeFaculte,
-                    'anneAccademique'=>$this->anneeAccademique,
-                    'niveau' => $this->niveau,
-                    'session' => 2,
-                    'premierVersement' => $this->premierVersementS2 ?? 0,
-                    'deuxiemeVersement' => $this->deuxiemeVersementS2 ?? 0,
-                    'troisiemeVersement' => $this->troisiemeVersementS2 ?? 0,
-                    'total' => $this->totalS2,
-                    'statut' => $this->statut
-                ]);
-                $this->motifPaiement='Paiement session 2';
-                $paiementEffectue = true;
-                $session_transaction = '1 et 2';
-            }
+                    if ($paiementS2->troisiemeVersement != $this->troisiemeVersementS2) {
+                        $fieldsToUpdate['troisiemeVersement'] = $this->troisiemeVersementS2;
+                        $this->motifPaiement='Troisieme versement session 2';
+                    }
 
-        }
-        else{
-           
-            if ($paiementS2) {
-            // dd($this->premierVersementS2);
-            // L'enregistrement existe, vérifier si des champs ont changé
-            $fieldsToUpdate = [];
+                    if ($paiementS2->total != $this->totalS2) {
+                        $fieldsToUpdate['total'] = $this->totalS2;
+                    }
 
-            if ($paiementS2->premierVersement != $this->premierVersementS2  ) {
-                $fieldsToUpdate['premierVersement'] = $this->premierVersementS2;
-                $this->motifPaiement='Permier versement session 2';
-            }
+                    if ($paiementS2->statut != $this->statut) {
+                        $fieldsToUpdate['statut'] = $this->statut;
+                    }
 
-            if ($paiementS2->deuxiemeVersement != $this->deuxiemeVersementS2) {
-                $fieldsToUpdate['deuxiemeVersement'] = $this->deuxiemeVersementS2;
-                $this->motifPaiement='Deuxieme versement session 2';
-            }
-
-            if ($paiementS2->troisiemeVersement != $this->troisiemeVersementS2) {
-                $fieldsToUpdate['troisiemeVersement'] = $this->troisiemeVersementS2;
-                $this->motifPaiement='Troisieme versement session 2';
-            }
-
-            if ($paiementS2->total != $this->totalS2) {
-                $fieldsToUpdate['total'] = $this->totalS2;
-            }
-
-            if ($paiementS2->statut != $this->statut) {
-                $fieldsToUpdate['statut'] = $this->statut;
-            }
-
-            // Mettre à jour uniquement si des champs ont changé
-            if (!empty($fieldsToUpdate)) {
-                $paiementS2->update($fieldsToUpdate);
-                $paiementEffectue = true;
-                $session_transaction = '2';
-            }
-
-            } else {
-                // L'enregistrement n'existe pas, on crée un nouveau
-                paimentEtudiantModel::create([
-                    'matriculeEtudiant' => $this->matriculeEtudiant,
-                    'codeFaculte' => $this->codeFaculte,
-                    'anneAccademique'=>$this->anneeAccademique,
-                    'niveau' => $this->niveau,
-                    'session' => 2,
-                    'premierVersement' => $this->premierVersementS2 ?? 0,
-                    'deuxiemeVersement' => $this->deuxiemeVersementS2 ?? 0,
-                    'troisiemeVersement' => $this->troisiemeVersementS2 ?? 0,
-                    'total' => $this->totalS2,
-                    'statut' => $this->statut
-                ]);
-                $this->motifPaiement='Paiement session 2';
-                $paiementEffectue = true;
-                $session_transaction = '2';
+                    // Mettre à jour uniquement si des champs ont changé
+                    if (!empty($fieldsToUpdate)) {
+                        $paiementS2->update($fieldsToUpdate);
+                        $paiementEffectue = true;
+                        $session_transaction = '2';
+                    }
+                }
             }
         }
-        
-        if($paiementEffectue){
-            transactionPaiementModel::create([
+        else
+        {
+            if ($paiementS2) 
+            {
+                // dd($this->premierVersementS2);
+                // L'enregistrement existe, vérifier si des champs ont changé
+                $fieldsToUpdate = [];
+
+                if ($paiementS2->premierVersement != $this->premierVersementS2  ) {
+                    $fieldsToUpdate['premierVersement'] = $this->premierVersementS2;
+                    $this->motifPaiement='Permier versement session 2';
+                }
+
+                if ($paiementS2->deuxiemeVersement != $this->deuxiemeVersementS2) {
+                    $fieldsToUpdate['deuxiemeVersement'] = $this->deuxiemeVersementS2;
+                    $this->motifPaiement='Deuxieme versement session 2';
+                }
+
+                if ($paiementS2->troisiemeVersement != $this->troisiemeVersementS2) {
+                    $fieldsToUpdate['troisiemeVersement'] = $this->troisiemeVersementS2;
+                    $this->motifPaiement='Troisieme versement session 2';
+                }
+
+                if ($paiementS2->total != $this->totalS2) {
+                    $fieldsToUpdate['total'] = $this->totalS2;
+                }
+
+                if ($paiementS2->statut != $this->statut) {
+                    $fieldsToUpdate['statut'] = $this->statut;
+                }
+
+                // Mettre à jour uniquement si des champs ont changé
+                if (!empty($fieldsToUpdate)) {
+                    $paiementS2->update($fieldsToUpdate);
+                    $paiementEffectue = true;
+                    $session_transaction = '2';
+                }
+
+            } 
+        }
+    }
+
+    if($paiementEffectue)
+    {
+        transactionPaiementModel::create([
             'numeroTransaction' => $this->numTransaction,
             'matriculeEtudiant' => $this->matriculeEtudiant,
             'codeFaculteEtudiant' => $this->codeFaculte,
@@ -637,19 +649,17 @@ class FormulairePaiementEtudiants extends Component
         // 🔥 IMPORTANT : on déclenche export après save
         $this->dispatch('export-ready',titres:$titres,filename:$filename, numeroTransaction: $this->numTransaction );
         $this->resetForm();
-        }
-
-
-        
     }
-    else{
-        
+    else
+    {
         if($this->paimentFullPlus){
             $this->dispatch('erreur', message: $this->paimentFullPlus);
         }
     }
-        
+    
     }
+        
+
 
 
 
@@ -664,6 +674,8 @@ class FormulairePaiementEtudiants extends Component
                     ->first();
 
         $transaction = transactionPaiementModel::where('numeroTransaction', $numeroTransaction)->first();
+
+        $comptable = Auth::user()->personnel->nom." ".Auth::user()->personnel->prenom;
 
         // 🔹 Vérification
         if (!$etudiant || !$transaction) {
@@ -683,7 +695,8 @@ class FormulairePaiementEtudiants extends Component
             'titre' => $titres,
             'matricule' => $matricule,
             'transaction' => $transaction,
-            'numeroTransaction' => $numeroTransaction
+            'numeroTransaction' => $numeroTransaction,
+            'comptable'=> $comptable
 
         ])
         ->setOption('enable-local-file-access', true)

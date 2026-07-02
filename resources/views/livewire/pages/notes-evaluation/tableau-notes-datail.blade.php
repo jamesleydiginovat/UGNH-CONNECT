@@ -1,34 +1,56 @@
-<section class="relative bg-white dark:bg-gray-900  m-3 h-full">
-    <div class=" right-0 top-0 ">
-        <div @class(['text-end  flex flex-row justify-between cursor-pointer p-1 text-red-500 '])
+<section
+    x-data="{
+        showEditNoteModal: false,
+        selectedNote: null
+    }"
+    class="relative bg-white dark:bg-gray-900 m-3 h-full"
+>
+
+    {{-- CLOSE --}}
+    <div class="right-0 top-0">
+        <div
+            @class(['text-end flex flex-row justify-between cursor-pointer p-1 text-red-500'])
             @click="tableSlideNote = !tableSlideNote"
-            >
-                <div></div>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="sm:w-6 w-3 sm:h-6 h-3 transition-all duration-500 ease-in-out hover:bg-red-500 hover:text-gray-300 rounded-sm">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+        >
+            <div></div>
+            <svg xmlns="http://www.w3.org/2000/svg" class="sm:w-6 w-3 sm:h-6 h-3 hover:bg-red-500 hover:text-gray-300 rounded-sm"
+                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
         </div>
     </div>
 
+    {{-- HEADER ACTIONS --}}
     <div class="flex flex-col gap-2 p-2 lg:flex-row lg:items-center lg:justify-between">
+        @php
+            $role = Auth::user()->roles->first()->nom ?? '';
 
-        <!-- Bouton -->
-        <button 
-            {{-- @click="form = !form"  --}}
-            @click="
-                                if (@js($periodeOuverte)) {
-                                    form = !form
-                                } else {
-                                    window.dispatchEvent(new CustomEvent('error-periode'))
-                                }
-                            "
+            $isAdmin = $role == "Administrateur";
+            $isSecretaireGenerale = $role == "Secrétaire générale";
+            $doyenFaculte = $role == "Doyen de faculté";
+        @endphp
 
-            class="w-full lg:w-auto hover:shadow-sm hover:bg-ugnh-blueHover bg-ugnh-blueFonce hover:text-gray-50 transition-all duration-300 border border-ugnh-blueFonce p-2 rounded-lg text-gray-50 text-sm">
-            Ajouter une nouvelle note
-        </button>
+        <!-- BUTTON -->
+        @if (!$isAdmin && !$isSecretaireGenerale && !$doyenFaculte)
+            <button
+                @click="if (@js($periodeOuverte)) { form = !form } else { window.dispatchEvent(new CustomEvent('error-periode')) }"
+                class="w-full lg:w-auto bg-ugnh-blueFonce hover:bg-ugnh-blueHover text-white p-2 rounded-lg text-sm transition"
+            >
+                Ajouter une nouvelle note
+            </button>
+        @endif
 
+        @if ($isAdmin || $isSecretaireGenerale || $doyenFaculte)
+            <button
+                @click="form = !form"
+                class="w-full lg:w-auto bg-ugnh-blueFonce hover:bg-ugnh-blueHover text-white p-2 rounded-lg text-sm transition"
+            >
+                Ajouter une nouvelle note
+            </button>
+        @endif
+        
 
-
+        {{-- ALERT --}}
         <div
             x-data="{ show:false }"
             x-on:error-periode.window="
@@ -42,153 +64,275 @@
             ❌ La période de saisie des notes est fermée
         </div>
 
-        <!-- Filtres -->
-        <div class="flex flex-col sm:flex-row flex-wrap gap-2 w-full lg:w-auto">
+        {{-- FILTERS --}}
+        <div class="flex flex-col sm:flex-row gap-2">
 
-            <!-- Faculté -->
-            <div class="flex items-center gap-1 bg-blue-50 dark:bg-gray-600 shadow-sm rounded p-1 w-full sm:w-auto">
-                <div class="bg-ugnh-blueFonce p-1 rounded shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/>
-                    </svg>
-                </div>
+            {{-- FAC --}}
+            <select wire:model.live="faculte" class="p-2 rounded bg-gray-100 dark:bg-gray-700">
+                <option value="0022">Faculté</option>
+                @foreach ($this->Facultes as $faculte)
+                    <option value="{{ $faculte->codeFac }}">{{ $faculte->nom }}</option>
+                @endforeach
+            </select>
 
-                <select wire:model.live="faculte"
-                    class="w-full bg-transparent outline-0 text-gray-600 dark:text-ugnh-blueClair">
-                    <option class="dark:text-gray-200 dark:bg-gray-600" value="0022">Faculte</option>
-                    @foreach ($this->Facultes as $faculte)
-                        <option class="dark:text-gray-200 dark:bg-gray-600" value="{{ $faculte->codeFac }}">{{ $faculte->nom }}</option>
+            {{-- NIVEAU --}}
+            <select wire:model.live="niveau" class="p-2 rounded bg-gray-100 dark:bg-gray-700">
+                <option value="">Niveau</option>
+                <option value="1">I</option>
+                <option value="2">II</option>
+                <option value="3">III</option>
+                <option value="4">IV</option>
+                <option value="5">V</option>
+            </select>
+
+            {{-- SESSION --}}
+            <select wire:model.live="session" class="p-2 rounded bg-gray-100 dark:bg-gray-700">
+                <option value="1">Session</option>
+                <option value="1">I</option>
+                <option value="2">II</option>
+            </select>
+
+        </div>
+    </div>
+
+    {{-- TITLE --}}
+    <div class="p-2 text-center bg-ugnh-blueFonce text-white">
+        <p>{{ $this->FacultesName->nom }} - Niveau: {{ $this->niveau }} - Session: {{ $this->session }}</p>
+    </div>
+
+    {{-- TABLE --}}
+    <div class="overflow-x-auto p-2">
+
+        <table class="min-w-full text-xs">
+
+            <thead class="bg-ugnh-blueClair dark:bg-gray-700">
+                <tr>
+                    <th class="p-2">Matricule</th>
+
+                    @foreach($this->Cours as $cours)
+                        <th class="p-2">{{ $cours->nom }}</th>
                     @endforeach
-                </select>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @foreach($this->NoteDetail as $matricule => $notesEtudiant)
+
+                    <tr class="border-b hover:bg-gray-100 dark:hover:bg-gray-700">
+
+                        <td class="p-2 font-bold text-yellow-500">
+                            {{ $matricule }}
+                        </td>
+
+                        @foreach($this->Cours as $cours)
+
+                            @php
+                                $note = $notesEtudiant
+                                    ->where('codeCours', $cours->codeCours)
+                                    ->first();
+                            @endphp
+
+                            <td
+                                class="p-2 cursor-pointer border-r"
+                                wire:click="putNOte({{ $note->noteIntra ?? 'null' }}, {{ $note->examenFinal ?? 'null' }}, {{ $note->noteRattrapage ?? 'null' }}, '{{ $cours->codeCours}}', '{{ $matricule}}', '{{ $this->FacultesName->codeFac }}','{{ $this->niveau }}', '{{ $this->session }}')"
+                                @click="
+                                    showEditNoteModal = true;
+                                    selectedNote = {
+                                        matricule: '{{ $matricule }}',
+                                        codeCours: '{{ $cours->codeCours }}',
+                                        cours: '{{ $cours->nom }}',
+                                        noteIntra: {{ $note->noteIntra ?? 'null' }},
+                                        examenFinal: {{ $note->examenFinal ?? 'null' }},
+                                        rattrapage: {{ $note->noteRattrapage ?? 'null' }},
+                                        faculte: '{{ $this->FacultesName->nom }}',
+                                        niveau: '{{ $this->niveau }}',
+                                        session: '{{ $this->session }}'
+                                    }
+                                "
+                            >
+
+                                @if($note)
+                                    @php
+                                        $total = ($note->noteIntra ?? 0) + ($note->examenFinal ?? 0);
+                                    @endphp
+
+                                    <span class="{{ $total < 65 ? 'text-red-500' : 'text-green-500' }}">
+                                        {{ $total }}
+                                    </span>
+                                    @if ($total < 65 )
+                                       <div class="text-xs">
+                                            Reprise:
+                                            <span class="{{ $total < 65 ? 'text-red-500' : 'text-green-500' }}">
+                                                {{ $note->noteRattrapage ?? 'Oui' }}
+                                            </span>
+                                        </div> 
+                                    @else
+                                        <div class="text-xs">
+                                            Reprise:
+                                            <span class="{{ $total < 65 ? 'text-red-500' : 'text-green-500' }}">
+                                                {{ $note->noteRattrapage ?? 'Non' }}
+                                            </span>
+                                        </div>
+                                    @endif
+                                    
+                                @endif
+
+                            </td>
+
+                        @endforeach
+
+                    </tr>
+
+                @endforeach
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+   {{-- ================= MODAL ================= --}}
+    <div
+        x-show="showEditNoteModal"
+        x-transition
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+    >
+
+        <div
+            @click.away="showEditNoteModal = false"
+            class="bg-white dark:bg-gray-800 w-full max-w-2xl p-6 rounded-2xl shadow-xl"
+        >
+
+            {{-- HEADER --}}
+            <div class="flex justify-between mb-4">
+
+                @if ($this->isNoteExiste())
+                     <h2 class="font-bold text-lg">Modifier la note</h2>
+                @else
+                     <h2 class="font-bold text-lg">Ajouter la note</h2>
+                @endif
+               
+                <button @click="showEditNoteModal = false">✕</button>
             </div>
 
-            <!-- Niveau -->
-            <div class="flex items-center gap-1 bg-blue-50 dark:bg-gray-600 shadow-sm rounded p-1 w-full sm:w-auto">
-                <div class="bg-ugnh-blueFonce p-1 rounded shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/>
-                    </svg>
+            {{-- SUCCESS MESSAGE --}}
+            @if(session()->has('successM'))
+                <div
+                    x-data="{ show: true }"
+                    x-init="setTimeout(() => show = false, 4000)"
+                    x-show="show"
+                    x-transition
+                    class="m-4 p-4 rounded-lg bg-green-100 text-green-700"
+                >
+                    {{ session('successM') }}
+                </div>
+            @endif
+
+            {{-- INFOS LECTURE SEULE --}}
+            <div class="grid grid-cols-2 gap-2 bg-gray-100 dark:bg-gray-700 p-3 rounded mb-4 text-sm">
+
+                <p><b>Matricule:</b> <span x-text="selectedNote?.matricule"></span></p>
+                <p><b>Cours:</b> <span x-text="selectedNote?.cours"></span></p>
+                <p><b>Faculté:</b> <span x-text="selectedNote?.faculte"></span></p>
+                <p><b>Niveau:</b> <span x-text="selectedNote?.niveau"></span></p>
+                <p><b>Session:</b> <span x-text="selectedNote?.session"></span></p>
+
+            </div>
+
+            {{-- FORM --}}
+            <form wire:submit.prevent="updateNote" class="space-y-4">
+
+                {{-- MATRICULE (hidden) --}}
+                <input type="hidden" wire:model="matricule">
+                <input type="hidden" wire:model="codeCours">
+
+                {{-- ================= INTRA ================= --}}
+                {{-- @if ($this->noteRattrapage ==null) --}}
+                <div>
+                    <label class="text-sm font-semibold">Note Intra</label>
+
+                    <input
+                        @if ($this->noteRattrapage !=null)
+                           @disabled(true) 
+                        @endif
+                        type="number"
+                        step="0.01"
+                        wire:model="noteIntra"
+                        class="w-full p-2 border rounded dark:bg-gray-700
+                        @error('noteIntra') border-red-500 @enderror"
+                    >
+
+                    @error('noteIntra')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
-                <select wire:model.live="niveau"
-                    class="w-full bg-transparent outline-0 text-gray-600 dark:text-ugnh-blueClair">
-                    <option class="dark:text-gray-200 dark:bg-gray-600" value="">Niveau</option>
-                    <option class="dark:text-gray-200 dark:bg-gray-600" value="1">I</option>
-                    <option class="dark:text-gray-200 dark:bg-gray-600" value="2">II</option>
-                    <option class="dark:text-gray-200 dark:bg-gray-600" value="3">III</option>
-                    <option class="dark:text-gray-200 dark:bg-gray-600"  value="4">IV</option>
-                    <option class="dark:text-gray-200 dark:bg-gray-600" value="5">V</option>
-                </select>
-            </div>
+                {{-- ================= EXAMEN ================= --}}
+                <div>
+                    <label class="text-sm font-semibold">Examen final</label>
 
-            <!-- Session -->
-            <div class="flex items-center gap-1 bg-blue-50 dark:bg-gray-600 shadow-sm rounded p-1 w-full sm:w-auto">
-                <div class="bg-ugnh-blueFonce p-1 rounded shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/>
-                    </svg>
+                    <input
+                        @if ($this->noteRattrapage !=null)
+                           @disabled(true) 
+                        @endif
+                        type="number"
+                        step="0.01"
+                        wire:model="examenFinal"
+                        class="w-full p-2 border rounded dark:bg-gray-700
+                        @error('examenFinal') border-red-500 @enderror"
+                    >
+
+                    @error('examenFinal')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                {{-- @endif --}}
+
+                {{-- ================= RATTRAPAGE ================= --}}
+                @if (($this->noteIntra !=null && $this->examenFinal !=null) && ($this->noteIntra + $this->examenFinal < 65))
+                    <div>
+                        <label class="text-sm font-semibold">Rattrapage</label>
+
+                        <input
+                            type="number"
+                            step="0.01"
+                            wire:model="noteRattrapage"
+                            class="w-full p-2 border rounded dark:bg-gray-700
+                            @error('noteRattrapage') border-red-500 @enderror"
+                        >
+
+                        @error('noteRattrapage')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>  
+                @endif
+                
+
+                {{-- ACTIONS --}}
+                <div class="flex justify-end gap-3">
+
+                    <button
+                        type="button"
+                        @click="showEditNoteModal = false"
+                        class="px-4 py-2 bg-gray-400 text-white rounded"
+                    >
+                        Annuler
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="px-4 py-2 bg-green-600 text-white rounded"
+                    >
+                        Modifier
+                    </button>
+
                 </div>
 
-                <select wire:model.live="session"
-                    class="w-full bg-transparent outline-0 text-gray-600 dark:text-ugnh-blueClair">
-                    <option class="dark:text-gray-200 dark:bg-gray-600" value="">Session</option>
-                    <option class="dark:text-gray-200 dark:bg-gray-600" value="1">I</option>
-                    <option class="dark:text-gray-200 dark:bg-gray-600" value="2">II</option>
-                </select>
-            </div>
+            </form>
 
         </div>
 
     </div>
 
-    @php
-        $this->NoteDetail;
-    @endphp
-     
-
-    <div class="p-2 dark:text-gray-200">
-            <div class="overflow-x-auto  ">
-                <div class=" p-2 text-center bg-ugnh-blueFonce text-ugnh-blueClair">
-                    <p>{{ $this->FacultesName->nom }} - Niveau: {{  $this->niveau }} - Session: {{ $this->session }}</p>
-                </div>
-                <table class="min-w-full text-xs ">
-                    <thead class="bg-ugnh-blueClair dark:bg-gray-700 ">
-                        
-                        {{-- <tr class="text-left  bg-ugnh-blueFonce text-ugnh-blueClair">
-                            <th class="px-1 py-3">
-                                <p>{{ $this->FacultesName->nom }} - Niveau: {{  $this->niveau }} - Session: {{ $this->session }}</p>
-                            </th>
-                        </tr> --}}
-                        
-                        <tr class="text-left  ">
-                            <th class="px-1 py-3">
-                                <p>Matricule</p>
-                            </th>
-
-                            @foreach($this->Cours as $cours)
-                                <th class="px-1 py-3">
-                                   <p>{{ $cours->nom}}</p>
-                                </th>
-                            @endforeach
-                           
-                        </tr>
-                    </thead>
-                    <tbody>
-                        
-                        @foreach($this->NoteDetail as $matricule => $notesEtudiant)
-                            <tr class="border-b mb-2 border-ugnh-blueFonce dark:border-gray-600 hover:bg-ugnh-blueClair dark:hover:bg-gray-600 hover:shadow-sm">
-
-                                <td class="p-1 border-r border-gray-300 font-bold dark:text-yellow-500">
-                                    <p>{{ $matricule}}</p>
-                                </td>
-
-                                @foreach($this->Cours as $cours)
-                                    <td class="p-1 border-r border-gray-300 font-bold">
-                                        @php
-                                        $note = $notesEtudiant
-                                            ->where('codeCours', $cours->codeCours)
-                                            ->first();
-                                        @endphp
-                                        
-                                            @if($note && ($note->noteIntra !== null || $note->examenFinal !== null))
-                                                    @if ((($note->noteIntra ?? 0) + ($note->examenFinal ?? 0)) < 65 )
-                                                        <p class="text-red-500">
-                                                        {{ ($note->noteIntra ?? 0) + ($note->examenFinal ?? 0) }}
-                                                        </p>
-                                                    @else
-                                                        <p class="text-green-500">
-                                                        {{ ($note->noteIntra ?? 0) + ($note->examenFinal ?? 0) }}
-                                                        </p>
-                                                    @endif
-                                                    
-                                            @endif
-                                        
-
-                                        @if($note && ($note->noteIntra !== null && $note->examenFinal !== null))
-                                            @if ((($note->noteIntra ?? 0) + ($note->examenFinal ?? 0)) < 65 )
-                                                <p class=" font-normal text-red-500">
-                                                    Reprise: {{$note->noteRattrapage ?? "Oui"}}
-                                                </p>
-                                            @else
-                                                 <p class=" font-normal text-green-500">
-                                                    Reprise: Non
-                                                </p>
-                                            @endif
-                                            
-                                        @endif
-                                    </td>
-                                    
-                                @endforeach
-                            </tr>
-                        @endforeach
-
-                    </tbody>
-                </table>
-            </div>
-
-    </div>
-     
-    <livewire:pages.notes-evaluation.formulaire-notes-evaluation />
-
 </section>
-

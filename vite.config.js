@@ -11,10 +11,13 @@ export default defineConfig({
         tailwindcss(),
     ],
     server: {
-        host: '192.168.0.101',
+
+
+        
+        host: '192.168.0.102',
         port: 5173,
         hmr: {
-            host: '192.168.0.101' // 👉 mets TON IP ici
+            host: '192.168.0.102' // 👉 mets TON IP ici
         },
         watch: {
             ignored: ['**/storage/framework/views/**'],

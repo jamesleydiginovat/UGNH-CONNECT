@@ -160,7 +160,7 @@
             </label>
 
             <a 
-                href="#"
+                href="{{ Route('motDePasseOublie')}}"
                 class="text-blue-500 hover:text-blue-600 hover:underline"
             >
                 Mot de passe oublié ?

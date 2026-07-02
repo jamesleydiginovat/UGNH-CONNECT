@@ -160,4 +160,28 @@
 </div>
 @endif
 
+
+@if($this->getBultin('1') == null && $this->getBultin('2') == null)
+
+        <!-- EMPTY STATE -->
+        <div class="flex flex-col items-center justify-center p-10
+                    border rounded-xl
+                    bg-gray-50 dark:bg-gray-900
+                    border-gray-200 dark:border-gray-700">
+
+            <div class="text-5xl mb-3">📅</div>
+
+            <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-1">
+                Aucun bulletin disponible
+            </h3>
+
+            <p class="text-sm text-gray-500 dark:text-gray-400 text-center max-w-md">
+                Les bulletins de notes ne sont pas encore publiés pour cette session académique.
+                Veuillez patienter ou consulter régulièrement la plateforme pour les prochaines mises à jour.
+            </p>
+
+        </div>
+
+    @endif
+
 </section>

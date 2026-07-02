@@ -11,6 +11,7 @@ use App\Http\Controllers\financesController;
 use App\Http\Controllers\historiqueController;
 use App\Http\Controllers\loginController;
 use App\Http\Controllers\logoutController;
+use App\Http\Controllers\motDePasseOublieController;
 use App\Http\Controllers\notesController;
 use App\Http\Controllers\pdfController;
 use App\Http\Controllers\personnelsController;
@@ -59,6 +60,7 @@ Route::get('/gestion-des-tracabilites', [historiqueController::class , 'show'])-
 
 Route::get('/gestion-des-validation-Notes', [validationNotesController::class , 'show'])->name('validationNotes')->middleware('auth');
 
+Route::get('/motDePasseOublie', [motDePasseOublieController::class , 'show'])->name('motDePasseOublie');
 
 Route::prefix('esalle')->group(function () {
     Route::get('/', [homeController::class , 'show'])->name('home')->middleware('esalle.auth');
@@ -71,4 +73,16 @@ Route::prefix('esalle')->group(function () {
     Route::get('/mot-de-passe', [homeController::class , 'enterPassword'])->name('enterPassword')->middleware('esalle.auth');
     // coursHoraire
 });
+
+
+Route::get('/test-mail', function () {
+    \Mail::raw('Test UGNH-CONNECT OK', function ($message) {
+        $message->to('jamesleyphilippe90@gmail.com')
+                ->subject('Test Email');
+    });
+
+    return "OK";
+});
+
+
 

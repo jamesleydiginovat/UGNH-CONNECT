@@ -7,40 +7,40 @@ x-transition.duration.300ms
 
 >
 
-<div
-        x-on:success-pdffiche.window="pdf = !pdf"
-        x-show="pdf"
-        x-cloak
-        x-transition:enter="transition ease-out duration-100"
-        x-transition:enter-start="opacity-0 transform translate-y-4"
-        x-transition:enter-end="opacity-100 transform translate-y-0"
-        {{-- x-transition:leave="transition ease-in duration-500" --}}
-        x-transition:leave-start="opacity-100 transform translate-y-0"
-        x-transition:leave-end="opacity-0 transform translate-y-4"
-    @class([
-        'relative h-full '
-    ])>
+        <div
+                x-on:success-pdffiche.window="pdf = !pdf"
+                x-show="pdf"
+                x-cloak
+                x-transition:enter="transition ease-out duration-100"
+                x-transition:enter-start="opacity-0 transform translate-y-4"
+                x-transition:enter-end="opacity-100 transform translate-y-0"
+                {{-- x-transition:leave="transition ease-in duration-500" --}}
+                x-transition:leave-start="opacity-100 transform translate-y-0"
+                x-transition:leave-end="opacity-0 transform translate-y-4"
+            @class([
+                'relative h-full '
+            ])>
 
 
-    <section @class([
-    'w-full h-full p-0 sm:p-3 bg-gray-900 opacity-70 overflow-hidden  dark:bg-gray-800 dark:border-gray-600  absolute  bottom-0 left-0  shadow-sm  border-t border-[#ccc] shadow-none dark:sm:shadow-[0_-10px_20px_rgba(255,255,255,0.2)]'
-    ])> 
-    </section>
+            <section @class([
+            'w-full h-full p-0 sm:p-3 bg-gray-900 opacity-70 overflow-hidden  dark:bg-gray-800 dark:border-gray-600  absolute  bottom-0 left-0  shadow-sm  border-t border-[#ccc] shadow-none dark:sm:shadow-[0_-10px_20px_rgba(255,255,255,0.2)]'
+            ])> 
+            </section>
 
-        
-        <section class="mx-3 h-screen">
-            <div @class(['absolute z-50 sm:top-3  top-3  right-1 cursor-pointer p-1 text-red-500 transition-all duration-500 ease-in-out hover:bg-red-500 hover:text-gray-300'])
-                @click="pdf = !pdf"
-                >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="sm:w-6 w-3 sm:h-6 h-3 transition-all duration-100 ease-in-out">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </div>
+                
+            <section class="mx-3 h-screen">
+                <div @class(['absolute z-50 sm:top-3  top-3  right-1 cursor-pointer p-1 text-red-500 transition-all duration-500 ease-in-out hover:bg-red-500 hover:text-gray-300'])
+                    @click="pdf = !pdf"
+                    >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="sm:w-6 w-3 sm:h-6 h-3 transition-all duration-100 ease-in-out">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </div>
 
-            {{-- @include('livewire.pages.pdf.iframes.pdf-personnel') --}}
-            <livewire:pages.pdf.iframes.pdf-recu-paiement />
-        </section>
-    </div>
+                {{-- @include('livewire.pages.pdf.iframes.pdf-personnel') --}}
+                <livewire:pages.pdf.iframes.pdf-recu-paiement />
+            </section>
+        </div>
 
 
     <div
@@ -76,6 +76,7 @@ x-transition.duration.300ms
 
 
             <div @class(['fixed sm:absolute sm:top-1  z-50 sm:top-0 top-1 right-1 sm:right-0 bg-red-500 sm:bg-transparent  cursor-pointer  p-1 sm:text-red-500 text-gray-50 transition-all duration-500 ease-in-out hover:bg-red-500 hover:text-gray-300'])
+            wire:click="resetForm"
             @click="form = !form"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="sm:w-6 w-3 sm:h-6 h-3 transition-all duration-100 ease-in-out">
@@ -118,11 +119,29 @@ x-transition.duration.300ms
                                </div> --}}
                             {{-- </div> --}} 
                 <input wire:model.live="codePersonnel" type="text" class="border border-gray-200" hidden>
-                <div class="flex flex-row items-center relative">
+                {{-- <div class="flex flex-row items-center relative">
                     <input wire:model.live="rechercherEtudiant" class="border pe-10 border-ugnh-blueClair shadow-sm rounded-lg p-2 w-full outline-none" type="text" name="" id="" placeholder="Rechercher l'etudiant" >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 absolute cursor-pointer hover:bg-ugnh-blueHover bg-ugnh-blueFonce text-white p-1 rounded-lg top-2 right-2 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                     </svg>
+                </div> --}}
+
+                <div>
+                    <div class=" w-full flex flex-row">
+                        <label class="font-bold text-gray-500"  for="faculte">Annee academique:</label>
+                        <div class="relative w-[70%]  pb-4">
+                        <select
+                            wire:model.live="anneAcademiqueSelect" @class(['outline-0 border-b border-gray-600 w-full mx-3', 'border-red-600'=>$errors->has('anneAcademiqueSelect')]) name="" id="faculte">
+                            <option value=""></option>
+                            @foreach ($this->LesAnneeAcademiques as $faculte)
+                                <option class="dark:text-ugnh-blueFonce" value="{{ $faculte->libelle }}">{{ $faculte->libelle }}</option>
+                            @endforeach
+                            
+                        </select>
+                        @error('anneAcademiqueSelect') <p class="text-red-500 text-[10px] absolute  mx-3 bottom-0">{{ $message }}</p> @enderror
+                        </div>
+
+                    </div>
                 </div>
 
 
@@ -317,7 +336,7 @@ x-transition.duration.300ms
 
 
             <button @class([
-                'flex flex-row bg-ugnh-blueClair text-gray-600 dark:text-gray-600 dark:border dark:border-gray-600 p-2 rounded gap-2'
+                'flex hidden flex-row bg-ugnh-blueClair text-gray-600 dark:text-gray-600 dark:border dark:border-gray-600 p-2 rounded gap-2'
             ])>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -333,98 +352,127 @@ x-transition.duration.300ms
 
 
 
-    {{-- message de succes --}}
+    
+
+    </div>
+
+    </div>
+
+
+    
     <div
-    x-data="{ show: false, message: '' }"
+        x-data="{
+            success: false,
+            erreur: false,
+            message: ''
+        }"
 
-    x-on:success.window="
-        show = true;
-        message = $event.detail.message;
-        setTimeout(() => show = false, 5000);
-    "
-    x-show="show"
-    class="flex w-full overflow-hidden bg-white shadow-md absolute top-0 left-0"
+        {{-- SUCCESS EVENT --}}
+        @success.window="
+            success = true;
+            erreur = false;
+            message = $event.detail.message;
+            setTimeout(() => success = false, 4000);
+        "
+
+        {{-- ERROR EVENT --}}
+        @erreur.window="
+            erreur = true;
+            success = false;
+            message = $event.detail.message;
+        "
+
+        class="fixed top-0 left-0 w-full z-[9999]"
     >
 
-    <div class="flex items-center justify-center w-12">
-        <svg class="w-6 h-6 text-emerald-500 fill-current" viewBox="0 0 40 40">
-            <path d="M20 3.33331C10.8 3.33331 3.33337 10.8 3.33337 20C3.33337 29.2 10.8 36.6666 20 36.6666C29.2 36.6666 36.6667 29.2 36.6667 20C36.6667 10.8 29.2 3.33331 20 3.33331ZM16.6667 28.3333L8.33337 20L10.6834 17.65L16.6667 23.6166L29.3167 10.9666L31.6667 13.3333L16.6667 28.3333Z" />
-        </svg>
-    </div>
+        <!-- ========================= -->
+        <!-- SUCCESS TOAST (TOP) -->
+        <!-- ========================= -->
+        <div
+            x-show="success"
+            x-transition
+            class="flex items-center bg-green-100 border-l-4 border-green-500 text-green-700 p-4 shadow-md"
+        >
+            <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.707l-4 4a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L9 10.586l3.293-3.293a1 1 0 011.414 1.414z"/>
+            </svg>
 
-    <div class="px-4 py-2 -mx-3">
-        <div class="mx-3">
-            <span class="font-semibold text-emerald-500">Success</span>
-
-            <p class="text-sm text-gray-600" x-text="message"></p>
+            <p x-text="message"></p>
         </div>
-    </div>
 
-    </div>
+        <!-- ========================= -->
+        <!-- ERROR MODAL CENTER -->
+        <!-- ========================= -->
+        <div
+            x-show="erreur"
+            x-transition.opacity
+            class="fixed inset-0 flex items-center justify-center"
+        >
 
-    </div>
+            <!-- OVERLAY -->
+            <div
+                class="absolute inset-0 bg-black/50"
+                @click="erreur = false"
+            ></div>
 
-    </div>
+            <!-- MODAL BOX -->
+            <div
+                class="relative bg-white dark:bg-gray-800 w-[90%] sm:w-[420px] rounded-lg shadow-xl p-5 z-10"
+            >
 
-
-
-     <section @class([
-    'w-full h-full overflow-y-hidden bg-transparent fixed z-10 bottom-0 left-0 '
-    ])
-    x-data="{ InfosConnect: false, message: '' }"
-
-    x-on:erreur.window="
-        InfosConnect = true;
-        message = $event.detail.message;
-        {{-- setTimeout(() => show = false, 5000); --}}
-    "
-    x-show="InfosConnect"
-    {{-- x-show="modalConfirmation" --}}
-    x-transition.duration.300ms
-    >
-
-
-
-        <section @class([
-            'w-full h-full p-0 sm:p-3 bg-gray-900 opacity-20 overflow-hidden  dark:bg-gray-800 dark:border-gray-600  absolute  bottom-0 left-0  shadow-sm  border-t border-[#ccc] shadow-none dark:sm:shadow-[0_-10px_20px_rgba(255,255,255,0.2)]'
-            ])> 
-        </section>
-
-
-
-        <div class="absolute z-10  w-full m-auto h-full flex flex-row  items-center justify-center">
-
-            <div class="bg-white relative rounded-lg p-5 dark:bg-gray-800 lg:w-[40%]  sm:w-[50%] w-full  h-auto  shadow-2xl overflow-y-auto ">
-            
-                <div @class(['absolute z-50 sm:top-0 top-5 right-0   cursor-pointer  p-1 text-red-500 transition-all duration-500 ease-in-out hover:bg-red-500 hover:text-gray-300'])
-                @click="InfosConnect = !InfosConnect"
+                <!-- CLOSE ICON -->
+                <button
+                    class="absolute top-2 right-2 text-gray-500 hover:text-red-500"
+                    @click="erreur = false"
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="sm:w-6 w-3 sm:h-6 h-3 transition-all duration-100 ease-in-out">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        class="w-6 h-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
                     </svg>
-                </div> 
-                
-                <div class="flex flex-row gap-5">
-                    <div class="relative w-[10%]">
-                        <div class=" bg-ugnh-blueFonce absolute p-2 rounded-full top-0 left-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 text-gray-50">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-                            </svg>
-                        </div>
-                    </div>
+                </button>
 
-                    <div class="w-[90%]">
-                        <h1 class="font-bold text-xl mb-3 dark:text-gray-50">Information</h1>
-                        {{-- <p>Êtes-vous sûr de vouloir supprimer ce compte ? Cette action est irréversible.</p> --}}
-                        {{-- <p class="text-sm text-gray-600" x-text="message"></p> --}}
-                        <p class="italic mb-1 dark:text-gray-50">{{ $this->paimentFullPlus}}</p>
-                        {{-- <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure non consectetur deleniti rerum velit? Accusantium inventore recusandae explicabo obcaecati porro, quia cum commodi laudantium, culpa voluptatibus illum amet harum? Veritatis.</p> --}}
-
+                <!-- ICON -->
+                <div class="flex justify-center mb-3">
+                    <div class="bg-red-100 text-red-600 p-3 rounded-full">
+                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-5h2v2H9v-2zm0-8h2v6H9V5z"
+                                clip-rule="evenodd"/>
+                        </svg>
                     </div>
                 </div>
-            </div>
 
+                <!-- TITLE -->
+                <h2 class="text-center text-lg font-bold text-red-600 mb-2">
+                    Erreur
+                </h2>
+
+                <!-- MESSAGE -->
+                <p class="text-center text-gray-600 dark:text-gray-300"
+                x-text="message">
+                </p>
+
+                <!-- BUTTON -->
+                <div class="mt-5 flex justify-center">
+                    <button
+                        class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                        @click="erreur = false"
+                    >
+                        Fermer
+                    </button>
+                </div>
+
+            </div>
         </div>
+
+    </div>
+
         
     </section>
 
@@ -432,210 +480,6 @@ x-transition.duration.300ms
 
 
 
-    {{-- message de succes --}}
-    <div
-    x-data="{ show: false, message: '' }"
-
-    x-on:success-user.window="
-        show = true;
-        message = $event.detail.message;
-        setTimeout(() => show = false, 5000);
-    "
-    x-show="show"
-    class="flex w-full overflow-hidden bg-white shadow-md absolute top-0 left-0"
-    >
-
-    <div class="flex items-center justify-center w-12">
-        <svg class="w-6 h-6 text-emerald-500 fill-current" viewBox="0 0 40 40">
-            <path d="M20 3.33331C10.8 3.33331 3.33337 10.8 3.33337 20C3.33337 29.2 10.8 36.6666 20 36.6666C29.2 36.6666 36.6667 29.2 36.6667 20C36.6667 10.8 29.2 3.33331 20 3.33331ZM16.6667 28.3333L8.33337 20L10.6834 17.65L16.6667 23.6166L29.3167 10.9666L31.6667 13.3333L16.6667 28.3333Z" />
-        </svg>
-    </div>
-
-    <div class="px-4 py-2 -mx-3">
-        <div class="mx-3">
-            <span class="font-semibold text-emerald-500">Success</span>
-
-            <p class="text-sm text-gray-600" x-text="message"></p>
-        </div>
-    </div>
-
-    </div>
-    
-</section>
+  
 
 
-
-{{-- 
-
-<div @class([
-                'flex flex-row justify-between text-gray-600 dark:text-gray-400'
-            ])> --}}
-
-                {{-- <div @click="openListe= !openListe" class="bg-ugnh-blueFonce rounded-full text-gray-50 p-2 absolute bottom-2 right-2 z-50">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class=" w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                    </svg>
-                </div> --}}
-
-
-                {{-- <div :class="!openListe ? 'w-full lg:w-[60%]' : 'w-0 lg:w-full '"  @class([
-                    ' w-0 transiton-all duration-500 easy-out mx-auto'
-                ])>
-                        
-                        <div class="sm:text-2xl text-normal  font-bold p-3 text-center bg-ugnh-blueClair rounded-t-3xl dark:text-gray-600">
-                            Ajouter un nouveau personnel
-                        </div>
-
-
-                        <form wire:submit="save" 
-                            @class(['flex flex-col gap-5 sm:pb-10 pb-5  h-[85vh]   overflow-y-scroll no-scrollbar overflow-x-hidden',
-                                    'dark:text-gray-400'
-                            ])
-                            >
-
-                        
-                            <div class="sm:w-24 w-10 sm:h-24 h-10 rounded-full overflow-hidden bg-ugnh-blueFonce absolute sm:top-4 top-7 sm:right-25 right-auto left-1 sm:left-auto border  border-gray-300 dark:border-gray-700">
-                                <img
-                                    src="{{ asset('images/406659423c8827afe36441daaee8d9b2.jpg') }}"
-                                    alt=""
-                                    class="w-full h-full  object-cover text-center "
-                                >
-
-                                div
-                            </div>
-
-
-
-                            <div class="flex flex-col gap-5 border border-gray-200 shadow-sm p-6 dark:border-gray-600">
-                            <div @class(['flex sm:flex-row flex-col gap-5 '])>
-                                <div class=" w-full flex flex-row">
-                                <label class="font-bold text-gray-500"  for="nom">Code:</label>
-                                <input wire:model="code"  @class(['outline-0 border-b border-gray-600 w-full mx-3']) type="text" id="nom" >
-                                </div>
-                            </div>
-
-
-                            <div class=" flex flex-row">
-                                <label class="font-bold text-gray-500"  for="sexe">
-                                    Fonction
-                                </label>
-                                <select wire:model="fonction" @class([
-                                'outline-0 border-b border-gray-600 mx-3 w-full',
-                                'dark:text-ugnh-blueClair dark:border-gray-600'
-                                ]) name="" id="sexe">
-                                    <option class="dark:text-ugnh-blueFonce" value="Administrateur">Administrateur</option>
-                                    <option class="dark:text-ugnh-blueFonce" value="Secretaire">Secretaire</option>
-                                    <option class="dark:text-ugnh-blueFonce" value="Doyen faculte">Doyen faculte</option>
-                                    <option class="dark:text-ugnh-blueFonce" value="Comptable">Comptable</option>
-                                    <option class="dark:text-ugnh-blueFonce" value="Vice Doyen">Vice Doyen </option>
-                                    <option class="dark:text-ugnh-blueFonce" value="Bibliothecaire">Bibliothecaire </option>
-                                    <option class="dark:text-ugnh-blueFonce" value="">etc...</option>
-                                    
-                                </select>
-                            </div>
-
-                            </div>
-
-
-                            <div  @class([
-                                'flex flex-col gap-5 border border-gray-200 shadow-sm p-6',
-                                'dark:border-gray-600'
-                            ])>
-                            <h1 class="font-bold text-xl">Renseignements personnels <span class="text-xs font-normal italic">(remplissage automatique)</span></h1>
-
-
-                            <div @class(['flex sm:flex-row flex-col gap-5 '])>
-                                <div class="sm:w-1/2 w-full flex flex-row">
-                                <label class="font-bold text-gray-500"  for="nom">Nom:</label>
-                                <input wire:model="nom" @class(['outline-0 border-b border-gray-600 w-full mx-3']) type="text" id="nom" >
-                                </div>
-
-                                <div class="sm:w-1/2 w-full flex flex-row">
-                                <label class="font-bold text-gray-500"  for="Prenom">Prenom:</label>
-                                <input wire:model="prenom" @class(['outline-0 border-b border-gray-600 w-full mx-3']) type="text" id="prenom" >
-                                </div>
-                            </div>
-
-                            <div @class(['flex sm:flex-row flex-col gap-5 '])>
-                                <div class="sm:w-1/2 w-full flex flex-row">
-                                <label class="font-bold text-gray-500"  for="adresse">Adresse:</label>
-                                <input wire:model="adresse" @class(['outline-0 border-b border-gray-600 w-full mx-3']) type="text" id="adresse" >
-                                </div>
-
-                                <div class="sm:w-1/2 w-full flex flex-row">
-                                <label class="font-bold text-gray-500"  for="telephone">Telephone:</label>
-                                <input wire:model="telephone" @class(['outline-0 border-b border-gray-600 w-full mx-3']) type="text" id="telephone" >
-                                </div>
-                            </div>
-
-
-                                <div class="flex sm:flex-row flex-col gap-5 w-full">
-                                    <div class=" flex flex-row">
-                                        <label class="font-bold text-gray-500"  for="sexe">Sexe:</label>
-                                        <select wire:model="sexe" @class([
-                                        'outline-0 border-b border-gray-600 mx-3',
-                                        'dark:text-ugnh-blueClair dark:border-gray-600'
-                                        ]) name="" id="sexe">
-                                            <option class="dark:text-ugnh-blueFonce" value="M">Masculin</option>
-                                            <option class="dark:text-ugnh-blueFonce" value="F">Feminin</option>
-                                            
-                                        </select>
-                                    </div>
-                                </div>
-
-                                
-
-
-
-                            <div @class(['flex sm:flex-row flex-col gap-5 '])>
-                                <div class="sm:w-1/2 w-full flex flex-row">
-                                <label class="font-bold text-gray-500"  for="conditionMatrimonial">Condition matrimoniale:</label>
-                                <input @class(['outline-0 border-b border-gray-600 mx-3 w-[90%] sm:w-auto  ']) type="text" id="conditionMatrimonial" >
-                                </div>
-
-                                <div class="sm:w-1/2  w-full flex flex-row">
-                                <label class="font-bold text-gray-500"  for="email">E-mail:</label>
-                                <input wire:model="email" @class(['outline-0 border-b border-gray-600 mx-3 sm:w-[70%] w-full']) type="email" id="email" >
-                                </div>
-                            </div>
-
-                            </div>
-
-                            
-
-
-
-
-                            <div @class([
-                                'flex flex-row justify-between gap-5 border border-gray-200 shadow p-6',
-                                'dark:border-gray-600'
-                            ])>
-
-                             <button
-                             type="submit"
-                             @class([
-                                'flex flex-row bg-ugnh-blueFonce text-gray-50 dark:text-gray-300 dark:border dark:border-gray-600 p-2 rounded gap-2'
-                            ])
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z" />
-                                </svg>
-                                Ajouter
-                            </button>
-
-
-                            <button @class([
-                                'flex flex-row bg-ugnh-blueClair text-gray-600 dark:text-gray-600 dark:border dark:border-gray-600 p-2 rounded gap-2'
-                            ])>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-
-                                Annuler
-                            </button>
-                            </div>
-
-                        </form>
-
-                </div> --}}
-            {{-- </div> --}}

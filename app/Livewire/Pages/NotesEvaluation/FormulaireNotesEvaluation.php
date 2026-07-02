@@ -46,14 +46,28 @@ class FormulaireNotesEvaluation extends Component
             ->where('date_fin', '>=', now())
             ->exists();
 
-        if($session1){
-            $this->session = '1';
-        }
-        elseif($session2){
-            $this->session = '2';
-        }
+        $role = Auth::user()->roles->first()->nom ?? '';
+        $isAdmin = $role = 'Administrateur';
+        $isSecretaireGenerale = $role == "Secrétaire générale";
+        $doyenFaculte = $role == "Doyen de faculté";
+        $VicedoyenFaculte = $role == "Vice-doyen de faculté";
+        $SecretaireFaculte = $role == "Secretaire faculte";
+        $Secrétaireadjoint = $role == "Secrétaire adjoint";
 
-        $this->session = '2';
+        // if($isAdmin || ){
+        //     $this->session = null;
+        // }
+        // else{
+            if($session1){
+                $this->session = '1';
+            }
+            elseif($session2){
+                $this->session = '2';
+            }
+        // }
+       
+
+        // $this->session = '2';
         
     }
 
@@ -212,7 +226,7 @@ class FormulaireNotesEvaluation extends Component
                     }
                 }
                 else{
-                    $this->errorMessage='cet eleve a deja un note intra pour ce matiere';
+                    $this->errorMessage='Cet eleve a deja un note intra pour ce matiere';
                 }
             }
             elseif($this->typeEvaluation == "Examen Final"){
@@ -226,7 +240,7 @@ class FormulaireNotesEvaluation extends Component
                     }
                 }
                 else{
-                    $this->errorMessage='cet eleve a deja un note Examen final pour ce matiere';
+                    $this->errorMessage='Cet eleve a deja un note Examen final pour ce matiere';
                 }
             }
             elseif($this->typeEvaluation == "Note de rattrapage"){
@@ -240,7 +254,7 @@ class FormulaireNotesEvaluation extends Component
                     }
                 }
                 else{
-                    $this->errorMessage='cet eleve a deja un note de rattrapage pour ce matiere';
+                    $this->errorMessage='Cet eleve a deja un note de rattrapage pour ce matiere';
                 }
             }
         }
@@ -338,15 +352,16 @@ class FormulaireNotesEvaluation extends Component
                             'noteRattrapage' => $this->noteRattrapage
                         ]);
                     }
-
-                    $this->dispatch('successNote',message:'Note Ajouter avec succes');
+                    session()->flash('successNote', 'Note Ajouter avec succes');
+                    // $this->dispatch('successNote',message:'Note Ajouter avec succes');
                     broadcast(new updatedTable(''));
                     $action ="Enregistrement d'une note";
                     audit(Auth::user()->personnel->code, $action, $this->codeCours);
                     $this->resetForm();
             }
             else{
-                    $this->dispatch('erreur',message: "$this->errorMessage");
+                    session()->flash('erreur',$this->errorMessage );
+                    // $this->dispatch('erreur',message: "$this->errorMessage");
             }
             
         }
@@ -362,17 +377,23 @@ class FormulaireNotesEvaluation extends Component
                 'noteIntra'=>$this->noteIntra,
                 'examenFinal'=>$this->noteExamenFinal
             ]);
-                 $this->dispatch('successNote',message:'Note Ajouter avec succes');
+                session()->flash('successNote', 'Note Ajouter avec succes');
                  broadcast(new updatedTable(''));
                  $action ="Enregistrement d'une note";
                  audit(Auth::user()->personnel->code, $action, $this->codeCours);
                 $this->resetForm();
             }
             else{
-                $this->dispatch('erreur',message: "$this->errorMessage");
+                session()->flash('erreur',$this->errorMessage );
+                // $this->dispatch('erreur',message: "$this->errorMessage");
             }
         }
 
+    }
+
+    public function clearFlash()
+    {
+        session()->forget('success');
     }
 
     public function render()

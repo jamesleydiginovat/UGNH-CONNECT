@@ -398,7 +398,7 @@ x-transition.duration.300ms
 
 
 
-                                <div class="sm:w-1/2 w-full flex flex-row">
+                                {{-- <div class="sm:w-1/2 w-full flex flex-row">
                                     <label class="font-bold text-gray-500"  for="prenom">Telephone:</label>
 
                                     <div class="relative w-full  pb-4">
@@ -406,6 +406,45 @@ x-transition.duration.300ms
                                     @error('telephone') <p class="text-red-500 text-[10px] absolute  mx-3 bottom-0">{{ $message }}</p> @enderror
                                     </div>
 
+                                </div> --}}
+
+
+
+                                <div class="sm:w-1/2 w-full flex flex-row">
+                                    <label class="font-bold text-gray-500" for="telephone">
+                                        Téléphone :
+                                    </label>
+
+                                    <div class="relative w-[75%] pb-4">
+                                        <input
+                                            wire:model="telephone"
+                                            x-data
+                                            x-mask="+509 99-99-9999"
+                                            x-init="
+                                                if($el.value === ''){
+                                                    $el.value = '+509 ';
+                                                }
+                                            "
+                                            @input="
+                                                if(!$el.value.startsWith('+509 ')){
+                                                    $el.value = '+509 ';
+                                                }
+                                            "
+                                            @class([
+                                                'outline-0 border-b border-gray-600 w-full mx-3',
+                                                'border-red-600' => $errors->has('telephone')
+                                            ])
+                                            type="text"
+                                            id="telephone"
+                                            placeholder="+509 00-00-0000"
+                                        >
+
+                                        @error('telephone')
+                                            <p class="text-red-500 text-[10px] absolute mx-3 bottom-0">
+                                                {{ $message }}
+                                            </p>
+                                        @enderror
+                                    </div>
                                 </div>
                             </div>
 
@@ -482,7 +521,7 @@ x-transition.duration.300ms
                                 </div>
                             </div>
 
-                            <div class="sm:w-1/2 w-full flex flex-row">
+                            {{-- <div class="sm:w-1/2 w-full flex flex-row">
                                 <label class="font-bold text-gray-500"  for="nif_cin">NIF/CIN:</label>
 
                                 <div class="relative w-auto  pb-4">
@@ -490,6 +529,34 @@ x-transition.duration.300ms
                                 @error('nif_cin') <p class="text-red-500 text-[10px] absolute  mx-3 bottom-0">{{ $message }}</p> @enderror
                                 </div>
 
+                            </div> --}}
+
+
+                            <div class="sm:w-1/2 w-full flex flex-row">
+                                <label class="font-bold text-gray-500" for="nif_cin">
+                                    NIF/CIN:
+                                </label>
+
+                                <div class="relative w-auto pb-4">
+                                    <input
+                                        wire:model="nif_cin"
+                                        x-data
+                                        x-mask="999-999-999-9"
+                                        @class([
+                                            'outline-0 border-b border-gray-600 w-full mx-3',
+                                            'border-red-600' => $errors->has('nif_cin')
+                                        ])
+                                        type="text"
+                                        id="nif_cin"
+                                        placeholder="000-000-000-0"
+                                    >
+
+                                    @error('nif_cin')
+                                        <p class="text-red-500 text-[10px] absolute mx-3 bottom-0">
+                                            {{ $message }}
+                                        </p>
+                                    @enderror
+                                </div>
                             </div>
 
 
@@ -577,7 +644,7 @@ x-transition.duration.300ms
 
 
 
-                            <div class="sm:w-1/2 w-full flex flex-row">
+                            {{-- <div class="sm:w-1/2 w-full flex flex-row">
                                 <label class="font-bold text-gray-500"  for="telephone">Telephone:</label>
 
                                 <div class="relative w-auto  pb-4">
@@ -585,7 +652,47 @@ x-transition.duration.300ms
                                 @error('telephonePersonneR') <p class="text-red-500 text-[10px] absolute  mx-3 bottom-0">{{ $message }}</p> @enderror
                                 </div>
 
-                            </div>
+                            </div> --}}
+
+                            <div class="sm:w-1/2 w-full flex flex-row">
+                                    <label class="font-bold text-gray-500" for="telephone">
+                                        Téléphone :
+                                    </label>
+
+                                    <div class="relative w-[75%] pb-4">
+                                        <input
+                                            wire:model="telephonePersonneR"
+                                            x-data
+                                            x-mask="+509 99-99-9999"
+                                            x-init="
+                                                if($el.value === ''){
+                                                    $el.value = '+509 ';
+                                                }
+                                            "
+                                            @input="
+                                                if(!$el.value.startsWith('+509 ')){
+                                                    $el.value = '+509 ';
+                                                }
+                                            "
+                                            @class([
+                                                'outline-0 border-b border-gray-600 w-full mx-3',
+                                                'border-red-600' => $errors->has('telephonePersonneR')
+                                            ])
+                                            type="text"
+                                            id="telephonePersonneR"
+                                            placeholder="+509 00-00-0000"
+                                        >
+
+                                        @error('telephonePersonneR')
+                                            <p class="text-red-500 text-[10px] absolute mx-3 bottom-0">
+                                                {{ $message }}
+                                            </p>
+                                        @enderror
+                                    </div>
+                                </div>
+
+
+
 
 
 

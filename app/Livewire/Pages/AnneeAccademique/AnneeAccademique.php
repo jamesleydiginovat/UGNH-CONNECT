@@ -2,8 +2,10 @@
 
 namespace App\Livewire\Pages\AnneeAccademique;
 
+use App\Events\updatedTable;
 use App\Models\annnee_accademiqueModel;
 use App\Models\evenementModel;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -51,6 +53,29 @@ class AnneeAccademique extends Component
     public function getAnneeAcademiqueProperty(){
         return annnee_accademiqueModel::paginate(5);
     }
+    public $active;
+    public $id;
+    public function toggleActive($active , $id){
+        $this->active = $active;
+        $this->id = $id;
+    }
+
+    public function  executeToggleActive(){
+        // dd($this->id);
+        if ($this->active == false) {
+
+            annnee_accademiqueModel::query()->update([
+                'active' => false
+            ]);
+
+            annnee_accademiqueModel::where('id', $this->id)->update([
+                'active' => true
+            ]);
+
+            broadcast(new updatedTable(''));
+        }
+    }
+    
     public function render()
     {
         return view('livewire.pages.annee-accademique.annee-accademique');

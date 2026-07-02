@@ -139,8 +139,8 @@
                                             </span>
 
                                         @else
-
-                                            <span class="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-3 py-1 rounded-full text-xs font-semibold">
+                                                
+                                            <span wire:click="toggleActive('{{ $annee->active }}', '{{ $annee->id }}')"  @click="toggleActive = !toggleActive" class="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-3 py-1 rounded-full text-xs font-semibold">
                                                 Inactive
                                             </span>
 
@@ -281,7 +281,7 @@
                                     @else
 
                                         <p class="mt-1 text-sm font-medium text-gray-700 dark:text-gray-200">
-                                            📅 {{ $debut->format('d M Y') }}
+                                            📅 {{ $debut->format('d M') }}
                                         </p>
 
                                     @endif
@@ -303,7 +303,7 @@
                                     @else
 
                                         <p class="mt-1 text-sm font-medium text-gray-700 dark:text-gray-200">
-                                            📅 {{ $fin->format('d M Y') }}
+                                            📅 {{ $fin->format('d M') }}
                                         </p>
 
                                     @endif
@@ -362,5 +362,62 @@
         </section>
 
     </div>
+
+
+
+
+     {{-- modal confirmation  --}}
+     <section @class([
+        'w-full h-full overflow-y-hidden bg-transparent fixed z-10 bottom-0 left-0 '
+        ])
+        x-show="toggleActive"
+        x-transition.duration.300ms
+        >
+
+
+
+        <section @class([
+            'w-full h-full p-0 sm:p-3 bg-gray-900 opacity-30 overflow-hidden  dark:bg-gray-800 dark:border-gray-600  absolute  bottom-0 left-0  shadow-sm  border-t border-[#ccc] shadow-none dark:sm:shadow-[0_-10px_20px_rgba(255,255,255,0.2)]'
+            ])> 
+        </section>
+
+
+
+        <div class="absolute z-10  w-full m-auto h-full flex flex-row  items-center justify-center">
+
+            <div class="bg-white relative rounded-lg p-5 dark:bg-gray-800 lg:min-w-[40%]  sm:min-w-[50%] sm:w-auto w-[93%]  h-auto  shadow-2xl overflow-y-auto ">
+            
+                <div @class(['absolute z-50 top-0 right-0   cursor-pointer  rounded-tr-lg p-1 text-red-500 transition-all duration-500 ease-in-out hover:bg-red-500 hover:text-gray-300'])
+                @click="toggleActive = !toggleActive"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="sm:w-6 w-3 sm:h-6 h-3 transition-all duration-100 ease-in-out">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </div> 
+                
+                <div class="flex sm:flex-row  flex-col">
+                    <div class="relative w-full sm:w-20  ">
+                        <div class=" sm:bg-red-200 sm:absolute flex justify-center sm:p-2 rounded-full top-0 left-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-center text-red-600 ">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="">
+                        <h1 class="font-bold ">Confirmation</h1>
+                        <p>Êtes-vous sûr de vouloir d'activer cette annee academique ?</p>
+
+                        <div class=" mt-5 flex fle-col gap-3 sm:justify-end justify-between">
+                            <button wire:click="executeToggleActive" @click="toggleActive = !toggleActive" class="bg-green-600 p-2 w-25 rounded-lg text-gray-50 hover:bg-green-400">Activer</button>
+                            <button @click="toggleActive = !toggleActive" class="bg-gray-600 p-2 w-25 rounded-lg text-gray-50 hover:bg-gray-400">Annuler</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        
+    </section>
 
 </div>

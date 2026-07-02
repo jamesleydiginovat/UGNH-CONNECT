@@ -19,6 +19,30 @@ class TableauNoteByEtudiant extends Component
     'success'=>'$refresh',
     'refreshTable'=>'$refresh',
     ];
+
+    public $session;
+
+
+    public function mount(){
+        $session1 = DB::table('evenement_tb')
+            ->where('nom', 'Saisie Notes Session 1')
+            ->where('date_debut', '<=', now())
+            ->where('date_fin', '>=', now())
+            ->exists();
+
+        $session2 = DB::table('evenement_tb')
+            ->where('nom', 'Saisie Notes Session 2')
+            ->where('date_debut', '<=', now())
+            ->where('date_fin', '>=', now())
+            ->exists();
+
+        if($session1){
+            $this->session = '1';
+        }
+        elseif($session2){
+            $this->session = '2';
+        }
+    }
     
     public function anneeAccademiqueActive(){
         return annnee_accademiqueModel::where('active', true)->first();
@@ -106,7 +130,6 @@ class TableauNoteByEtudiant extends Component
         return $noteManquante;
     }
 
-
     public function isSession1CompleteAndSession2Empty()
     {
         /*
@@ -187,34 +210,141 @@ class TableauNoteByEtudiant extends Component
         $anneAcademique = optional($this->anneeAccademiqueActive())->libelle;
         $niveau = $this->niveau;
         $admisOrNot = $this->admisOrNot;
+
+
         $pdf = Pdf::loadView('tamplate.pdf.bultinEtudiant', [
                 'InfosEtudiant' => $etudiants,
                 'noteByEtudiant'=> $notes,
                 'anneAcademique'=>$anneAcademique,
                 'niveau'=>$niveau,
                 'admisOrNot'=>$admisOrNot
-        ])->setOption('enable-local-file-access', true);
-         
-        $date = now()->format('Y-m-d_H-i-s');
+            ])->setOption('enable-local-file-access', true);
+            
+            $date = now()->format('Y-m-d_H-i-s');
 
-        // 📁 Nom du fichier
-        $titreFichier = preg_replace('/[^A-Za-z0-9\-]/', '_', $this->matricule);
-        $filename = trim($titreFichier).'_niveau_'.$niveau.'_'.$anneAcademique.'.pdf';
-        // 📁 Chemin de stockage
-        $path = storage_path('app/public/pdf/'.$filename);
+            // 📁 Nom du fichier
+            $titreFichier = preg_replace('/[^A-Za-z0-9\-]/', '_', $this->matricule);
+            $filename = trim($titreFichier)
+                        . '_niveau_' . $niveau
+                        . '_session_' . $this->session
+                        . $anneAcademique
+                        . '_'
+                        . date('H_i_s')
+                        . '.pdf';
 
-        // 💾 Enregistrement du fichier
-        $pdf->save($path);
+            // 📁 Chemin de stockage
+            $path = storage_path('app/public/pdf/'.$filename);
 
-        bultinEtudiantModel::create([
-            'matricule'=>$this->matricule,
-            'niveau' =>$this->niveau,
-            'session'=>'2',
-            'anneeAcademique' => optional($this->anneeAccademiqueActive())->libelle,
-            'pdf'=> $filename,
-        ]);
 
-        $this->dispatch('success-pdf', fileName:$filename);
+        $isExistes = bultinEtudiantModel::where('niveau', $this->niveau)
+                             ->where('session', $this->session)
+                             ->where('matricule',$this->matricule)
+                             ->where('anneeAcademique', optional($this->anneeAccademiqueActive())->libelle)
+                             ->exists();
+        // dd($this->session);
+
+        if(!$isExistes){
+            // 💾 Enregistrement du fichier
+            $pdf->save($path);
+            bultinEtudiantModel::create([
+                'matricule'=>$this->matricule,
+                'niveau' =>$this->niveau,
+                'session'=> $this->session,
+                'anneeAcademique' => optional($this->anneeAccademiqueActive())->libelle,
+                'pdf'=> $filename,
+            ]);
+
+            $this->dispatch('success-pdf', fileName:$filename);
+        }
+        else{
+            // 💾 Enregistrement du fichier
+            $pdf->save($path);
+            bultinEtudiantModel::where('niveau', $this->niveau)
+                             ->where('session', $this->session)
+                             ->where('matricule',$this->matricule)
+                             ->where('anneeAcademique', optional($this->anneeAccademiqueActive())->libelle)
+                             ->update([
+                                'pdf'=> $filename,
+                            ]);
+                            
+            $this->dispatch('success-pdf', fileName:$filename);
+            
+        }
+        
+    }
+
+
+
+
+    public function exportReleverDesNotes()
+    {
+        // dd('je suis ici');
+        // P1. Récupération sécurisée des données
+        $etudiants = $this-> getInfosEtudiantProperty();
+        $notes = $this->getNoteByEtudiantProperty();
+        $anneAcademique = optional($this->anneeAccademiqueActive())->libelle;
+        $niveau = $this->niveau;
+        $admisOrNot = $this->admisOrNot;
+
+
+        $pdf = Pdf::loadView('tamplate.pdf.releverDesEtudiant', [
+                'InfosEtudiant' => $etudiants,
+                'noteByEtudiant'=> $notes,
+                'anneAcademique'=>$anneAcademique,
+                'niveau'=>$niveau,
+                'admisOrNot'=>$admisOrNot
+            ])->setOption('enable-local-file-access', true);
+            
+            $date = now()->format('Y-m-d_H-i-s');
+
+            // 📁 Nom du fichier
+            $titreFichier = preg_replace('/[^A-Za-z0-9\-]/', '_', $this->matricule);
+            $filename = 'releverDesNotes_'.trim($titreFichier)
+                        . '_niveau_' . $niveau
+                        . $anneAcademique
+                        . '_'
+                        . date('H_i_s')
+                        . '.pdf';
+
+            // 📁 Chemin de stockage
+            $path = storage_path('app/public/pdf/'.$filename);
+
+
+        $isExistes = bultinEtudiantModel::where('niveau', $this->niveau)
+                             ->where('session', $this->session)
+                             ->where('matricule',$this->matricule)
+                             ->where('anneeAcademique', optional($this->anneeAccademiqueActive())->libelle)
+                             ->exists();
+        // dd($this->session);
+
+        if(!$isExistes){
+            // 💾 Enregistrement du fichier
+            $pdf->save($path);
+            bultinEtudiantModel::create([
+                'matricule'=>$this->matricule,
+                'niveau' =>$this->niveau,
+                'session'=> $this->session,
+                'anneeAcademique' => optional($this->anneeAccademiqueActive())->libelle,
+                'pdf'=> $filename,
+            ]);
+
+            $this->dispatch('success-pdf', fileName:$filename);
+        }
+        else{
+            // 💾 Enregistrement du fichier
+            $pdf->save($path);
+            bultinEtudiantModel::where('niveau', $this->niveau)
+                             ->where('session', $this->session)
+                             ->where('matricule',$this->matricule)
+                             ->where('anneeAcademique', optional($this->anneeAccademiqueActive())->libelle)
+                             ->update([
+                                'pdf'=> $filename,
+                            ]);
+                            
+            $this->dispatch('success-pdf', filename:$filename);
+            
+        }
+        
     }
 
     public function admissionEtudiant($value){
