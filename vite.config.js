@@ -14,13 +14,13 @@ export default defineConfig({
 
 
         
-        host: '192.168.0.102',
+        host: 'Localhost',
         port: 5173,
-        hmr: {
-            host: '192.168.0.102' // 👉 mets TON IP ici
-        },
-        watch: {
-            ignored: ['**/storage/framework/views/**'],
-        },
+        // hmr: {
+        //     host: '192.168.0.102' // 👉 mets TON IP ici
+        // },
+        // watch: {
+        //     ignored: ['**/storage/framework/views/**'],
+        // },
     },
 });
