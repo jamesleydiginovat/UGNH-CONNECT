@@ -42,11 +42,12 @@ COPY . .
 # =========================
 # INSTALL PHP DEPENDENCIES
 # =========================
+
 RUN composer install \
     --no-dev \
     --optimize-autoloader \
-    --no-interaction
-
+    --no-interaction \
+    --no-scripts
 # =========================
 # INSTALL NODE DEPENDENCIES
 # =========================
