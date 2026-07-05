@@ -17,7 +17,6 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     nodejs \
     npm \
-    wkhtmltopdf \
     && docker-php-ext-install \
         pdo \
         pdo_pgsql \
@@ -28,7 +27,6 @@ RUN apt-get update && apt-get install -y \
         bcmath \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-
 # =========================
 # COMPOSER
 # =========================
