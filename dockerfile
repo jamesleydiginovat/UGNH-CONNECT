@@ -1,44 +1,71 @@
-# Base PHP
 FROM php:8.3-cli
 
-# Dossier de travail
-WORKDIR /var/www
-
-# Installer dépendances système
+# Installation des dépendances système
 RUN apt-get update && apt-get install -y \
     git \
+    unzip \
     curl \
     zip \
-    unzip \
+    nodejs \
+    npm \
     libpq-dev \
-    libzip-dev
+    libzip-dev \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    libonig-dev \
+    libxml2-dev \
+    wkhtmltopdf \
+    && docker-php-ext-install \
+        pdo \
+        pdo_pgsql \
+        mbstring \
+        zip \
+        exif \
+        pcntl \
+        bcmath \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Extensions PHP nécessaires pour Laravel + PostgreSQL
-RUN docker-php-ext-install pdo pdo_pgsql zip
+# Installation de Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Installer Node.js LTS (important pour Vite/Tailwind)
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs
+# Répertoire de travail
+WORKDIR /app
 
-# Copier le projet
+# Copier les fichiers du projet
 COPY . .
 
-# Installer Composer
-RUN curl -sS https://getcomposer.org/installer | php -- \
-    --install-dir=/usr/local/bin --filename=composer
+# Installer les dépendances PHP
+RUN composer install \
+    --no-dev \
+    --optimize-autoloader \
+    --no-interaction
 
-# Installer dépendances PHP (Laravel)
-RUN composer install --no-dev --optimize-autoloader
-
-# Installer dépendances frontend + build Tailwind/Vite
+# Installer les dépendances Node.js
 RUN npm install
+
+# Compiler les assets
 RUN npm run build
 
 # Permissions Laravel
+RUN mkdir -p storage/framework/cache
+RUN mkdir -p storage/framework/sessions
+RUN mkdir -p storage/framework/views
+RUN mkdir -p storage/logs
+
 RUN chmod -R 775 storage bootstrap/cache
+RUN chown -R www-data:www-data storage bootstrap/cache
 
-# Port Render
-EXPOSE 10000
+# Optimisations Laravel
+RUN php artisan package:discover --ansi || true
+RUN php artisan config:cache || true
+RUN php artisan route:cache || true
+RUN php artisan view:cache || true
 
-# Démarrage du serveur Laravel
-CMD php artisan serve --host=0.0.0.0 --port=10000
+# Railway fournit la variable PORT
+EXPOSE 8080
+
+CMD php artisan migrate --force && \
+    php artisan storage:link || true && \
+    php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
