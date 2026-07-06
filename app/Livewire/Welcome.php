@@ -15,6 +15,7 @@ class Welcome extends Component
     public $code=null;
     public $userType=null;
     public $kod;
+    public $james='je suis jamesley';
 
     protected $listeners = [
         'refreshTable'=>'$refresh',
