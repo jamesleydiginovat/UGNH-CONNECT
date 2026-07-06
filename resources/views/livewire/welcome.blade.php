@@ -14,7 +14,7 @@
 
     <!-- 🧠 PRESENTATION -->
     <div class="text-center px-6 py-10 max-w-3xl mx-auto">
-        <h2 class="text-3xl font-bold text-gray-800 dark:text-white">
+        <h2 style="color: red; font-size:50px;" class="text-3xl font-bold text-gray-800 dark:text-white">
             Bienvenue sur votre plateforme universitaire {{$this->essaiePostgre()}}
         </h2>
 
