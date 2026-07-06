@@ -25,6 +25,10 @@ class Welcome extends Component
         return annnee_accademiqueModel::where('active', true)->first();
     }
 
+    public function essaiePostgre(){
+        return  annnee_accademiqueModel::where('active', true)->value("libelle");
+    }
+
 
     public function isSecure(){
         return etudiant_password::where('matricule', session('user_code'))
